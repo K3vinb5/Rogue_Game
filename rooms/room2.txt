@@ -1,0 +1,20 @@
+##########
+#        #
+#   ##   #
+#   #    #
+    #    #
+##### ####
+#        #
+#        #
+#        #
+##########
+
+Bat,1,1
+Bat,2,1
+Skeleton,7,3
+Skeleton,8,2
+HealingPotion,8,4
+Treasure,5,8
+Thug,3,7
+Thug,7,7
+Door,0,4,room0,9,4,KEY2

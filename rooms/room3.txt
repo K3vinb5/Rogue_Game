@@ -1,0 +1,21 @@
+##########
+#        #
+         #
+#        #
+##########
+#        #
+#        #
+         #
+#        #
+##########
+
+Thug,2,2
+Bat,4,6
+Bat,4,7
+Bat,4,8
+Armor,8,8
+HealingPotion,8,3
+Door,0,2,room1,9,2,KEY1
+Door,0,7,room1,9,7
+Key,7,6,KEY1
+Key,2,4,KEY2
