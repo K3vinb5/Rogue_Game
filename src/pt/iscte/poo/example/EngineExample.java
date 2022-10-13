@@ -7,6 +7,7 @@ import pt.iscte.poo.gui.ImageMatrixGUI;
 import pt.iscte.poo.gui.ImageTile;
 import pt.iscte.poo.observer.Observed;
 import pt.iscte.poo.observer.Observer;
+import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
 import java.awt.event.KeyEvent;
 
@@ -59,10 +60,32 @@ public class EngineExample implements Observer {
 		
 		int key = ((ImageMatrixGUI) source).keyPressed();
 		
-		if (key == KeyEvent.VK_ENTER) {		
-			hero.move();
+//		if (key == KeyEvent.VK_ENTER) {		
+//			hero.move();
+//			turns++;
+//		}
+		
+		switch (key) {
+		case KeyEvent.VK_UP:
+			hero.move(Direction.UP);
 			turns++;
+			break;
+		case KeyEvent.VK_LEFT:
+			hero.move(Direction.LEFT);
+			turns++;
+			break;
+		case KeyEvent.VK_RIGHT:
+			hero.move(Direction.RIGHT);
+			turns++;
+			break;
+		case KeyEvent.VK_DOWN:
+			hero.move(Direction.DOWN);
+			turns++;
+			break;
+		default:
+			break;
 		}
+		
 		gui.setStatusMessage("ROGUE Starter Package - Turns:" + turns);
 		gui.update();
 	}

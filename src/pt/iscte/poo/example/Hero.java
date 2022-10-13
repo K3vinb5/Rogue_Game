@@ -18,10 +18,8 @@ public class Hero implements ImageTile {
 		return "Hero";
 	}
 
-	public void move() {
-		Direction randDirection = Direction.random();
-		Vector2D randVector = randDirection.asVector(); 
-		position = position.plus(randVector);
+	public void move(Direction d) {
+		position = position.plus(d.asVector());
 	}
 
 	@Override
