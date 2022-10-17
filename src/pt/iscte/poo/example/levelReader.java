@@ -25,7 +25,7 @@ public class levelReader {
 			// Reads Level
 			while(scanner.hasNextLine()) {
 				
-				if (j > 10 ) {break;} //Because Game Window has 10 height
+				if (j > EngineExample.GRID_HEIGHT ) {break;} 
 				
 				String line = scanner.nextLine();
 				char[] lineArray = line.toCharArray();
@@ -59,8 +59,8 @@ public class levelReader {
 			File file = new File(filePath);
 			Scanner scanner = new Scanner(file);
 			
-			// We skip the first 10 since this belong to the walls layout
-			for (int i = 0; i < 10; i++) {
+			// We skip the Grid related information
+			for (int i = 0; i < EngineExample.GRID_HEIGHT; i++) {
 				scanner.nextLine();
 			}
 			

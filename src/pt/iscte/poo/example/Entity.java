@@ -34,10 +34,13 @@ public class Entity extends GameElement{
 	}
 	
 	// Entity related methods
-	public void move(Direction d, int width, int height) {
+	public void move(Direction d) {
 		Point2D newPosition = this.getPosition().plus(d.asVector());
+		int newPositionX = newPosition.getX();
+		int newPositionY= newPosition.getY();
+		boolean withinBounds = (newPositionX < EngineExample.GRID_WIDTH && newPositionY < EngineExample.GRID_HEIGHT && newPositionX >= 0 && newPositionY >= 0);
 		//Checks if new position is valid
-		if ( Utils.withinBounds(width, height, newPosition) ){
+		if  (withinBounds){
 			this.setPosition(newPosition);
 		}
 	}

@@ -14,29 +14,30 @@ import java.awt.event.KeyEvent;
 
 public class EngineExample implements Observer {
 
+	// Window Attributes and others...
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
-	
 	private static EngineExample INSTANCE = null;
 	private ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-
+	// Hero related attributes
 	private Entity hero;
 	private final int heroHEALTH = 10;
 	private final int heroATTACK = 1;
-	
+	// Skeleton related attributes
 	private List<Entity> skeletonList;
 	private final int skeletonHEALTH = 5;
 	private final int skeletonATTACK = 1;
-	
+	//Bat related attributes
 	private List<Entity> batList;
 	private final int batHEALTH = 3;
 	private final int batATTACK = 1;
-	
+	// Thug related attributes
 	private List<Entity> thugList;
 	private final int thugHEALTH = 10;
 	private final int thugATTACK = 3;
-	
+	//Other attributes (Used for game logic)
 	private int turns;
+	private boolean[][] mapOccupied= new boolean[GRID_WIDTH][GRID_HEIGHT];
 	
 	public static EngineExample getInstance() {
 		if (INSTANCE == null)
@@ -44,14 +45,28 @@ public class EngineExample implements Observer {
 		return INSTANCE;
 	}
 
-	private EngineExample() {		
+	public boolean getMapOccupied(int x, int y) {
+		return this.mapOccupied[x][y];
+	}
+
+	public void setMapOccupied(boolean value, int x, int y) {
+		this.mapOccupied[x][y] = value;
+	}
+	
+	
+	private EngineExample() {	
+		
+		for (int x=0; x!=GRID_WIDTH; x++)
+			for (int y=0; y!=GRID_HEIGHT; y++)
+				mapOccupied[x][y] = false;
+		
 		gui.registerObserver(this);
 		gui.setSize(GRID_WIDTH, GRID_HEIGHT);
 		gui.go();
 	}
 
 	public void start() {
-		// temp
+		// temporary
 		int startingFloor = 0;
 		addFloor();
 		addObjects("rooms//room" + startingFloor + ".txt");
@@ -73,8 +88,11 @@ public class EngineExample implements Observer {
 		ArrayList<Wall> wallList = levelReader.readWalls(level);
 		List<ImageTile> tileList = new ArrayList<>();
 	
-		for (Wall w : wallList)
+		for (Wall w : wallList) {
 			tileList.add(w);
+			
+		}
+
 		gui.addImages(tileList);
 	}
 	
@@ -114,40 +132,41 @@ public class EngineExample implements Observer {
 				
 		switch (keyPressed) {
 		case KeyEvent.VK_UP:
-			hero.move(Direction.UP, GRID_WIDTH, GRID_HEIGHT);
+			hero.move(Direction.UP);
 			turns++;
 			break;
 		case KeyEvent.VK_LEFT:
-			hero.move(Direction.LEFT, GRID_WIDTH, GRID_HEIGHT);
+			hero.move(Direction.LEFT);
 			turns++;
 			break;
 		case KeyEvent.VK_RIGHT:
-			hero.move(Direction.RIGHT, GRID_WIDTH, GRID_HEIGHT);
+			hero.move(Direction.RIGHT);
 			turns++;
 			break;
 		case KeyEvent.VK_DOWN:
-			hero.move(Direction.DOWN, GRID_WIDTH, GRID_HEIGHT);
+			hero.move(Direction.DOWN);
 			turns++;
 			break;
 		default:
 			break;
 		}
 				
-		// Skeleton Movement
+		// Skeletons Movement
 		for(Entity skeleton : skeletonList) {
 			Direction skeletonDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
 			if ( turns % 2 != 0 ) {
-				skeleton.move(skeletonDirection, GRID_WIDTH, GRID_HEIGHT);
+				skeleton.move(skeletonDirection);
 			}
 		}
 		
-		// Bat Movement (still doesn't check for walls)
+		// Bats Movement (still doesn't check for walls)
 		for(Entity bat : batList) {
-			if ((int)(Math.random() * 2) == 1) { // 50% chance
+			if ((int)(Math.random() * 2) == 1) { // 50/50 chance
 				Direction batDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
-				bat.move(batDirection, GRID_WIDTH, GRID_HEIGHT);
+				bat.move(batDirection);
 			}else {
-				bat.move(Direction.random(), GRID_WIDTH, GRID_HEIGHT);
+				Direction randomDirection = Direction.random();
+				bat.move(randomDirection);
 			}
 		}
 		
@@ -157,5 +176,6 @@ public class EngineExample implements Observer {
 		// Updates Graphical User Interface
 		gui.update();
 	}
+
 	
 }
