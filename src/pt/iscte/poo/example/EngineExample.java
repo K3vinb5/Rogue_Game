@@ -9,6 +9,8 @@ import pt.iscte.poo.observer.Observed;
 import pt.iscte.poo.observer.Observer;
 import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
+import pt.iscte.poo.utils.Vector2D;
+
 import java.awt.event.KeyEvent;
 
 
@@ -20,6 +22,7 @@ public class EngineExample implements Observer {
 	private static EngineExample INSTANCE = null;
 	private ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
 	
+	private Skeleton skeleton;
 	private Hero hero;
 	private int turns;
 	
@@ -51,8 +54,14 @@ public class EngineExample implements Observer {
 	}
 	
 	private void addObjects() {
-		hero = new Hero("Hero", new Point2D(4,4), 0, 10, 1);
+		hero = new Hero("Hero", new Point2D(4,4), 10, 1);
+		
+		//Needs to be changed later to spawn based on file
+		skeleton = new Skeleton("Skeleton", new Point2D(0,0), 5, 1);
+		
+		
 		gui.addImage(hero);
+		gui.addImage(skeleton);
 	}
 	
 	@Override
@@ -83,8 +92,10 @@ public class EngineExample implements Observer {
 		}
 		
 		//Skeleton Movement
-		
-		// if turns%2 != 0 (odd turns)
+		Direction skeletonDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
+		if ( turns%2 != 0 ) {
+			skeleton.move(skeletonDirection, GRID_WIDTH, GRID_HEIGHT);
+		}
 		
 		// Updates Status Message
 		gui.setStatusMessage("Turns" + turns);

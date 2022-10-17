@@ -10,8 +10,8 @@ public abstract class Entity extends GameElement{
 	public int attack;
 	
 	// Entity Constructor
-	public Entity(String name, Point2D position, int layer, int health, int attack) {
-		super(name, position, layer);
+	public Entity(String name, Point2D position, int health, int attack) {
+		super(name, position, 0);
 		this.health = health;
 		this.attack = attack;
 	}
