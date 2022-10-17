@@ -24,13 +24,17 @@ public class EngineExample implements Observer {
 	private final int heroHEALTH = 10;
 	private final int heroATTACK = 1;
 	
-	private Entity skeleton;
+	private List<Entity> skeletonList;
 	private final int skeletonHEALTH = 5;
 	private final int skeletonATTACK = 1;
 	
-	private Entity bat;
+	private List<Entity> batList;
 	private final int batHEALTH = 3;
 	private final int batATTACK = 1;
+	
+	private List<Entity> thugList;
+	private final int thugHEALTH = 10;
+	private final int thugATTACK = 3;
 	
 	private int turns;
 	
@@ -47,9 +51,11 @@ public class EngineExample implements Observer {
 	}
 
 	public void start() {
+		// temp
+		int startingFloor = 0;
 		addFloor();
-		addObjects();
-		addWall("rooms//room0.txt");
+		addObjects("rooms//room" + startingFloor + ".txt");
+		addWall("rooms//room" + startingFloor + ".txt");
 		gui.setStatusMessage("Turns:" + turns);
 		gui.update();
 	}
@@ -72,19 +78,32 @@ public class EngineExample implements Observer {
 		gui.addImages(tileList);
 	}
 	
-	private void addObjects() {
+	private void addObjects(String floor) {
 		// Adding Hero
 		hero = new Hero("Hero", new Point2D(4,4), heroHEALTH, heroATTACK);
-		// Adding Skeleton
-		skeleton = levelReader.EntityReader("rooms//room0.txt", "Skeleton");
-		skeleton.setHealth(skeletonHEALTH); skeleton.setAttack(skeletonATTACK);
-		// Adding Bat
-		bat = levelReader.EntityReader("rooms//room0.txt", "Bat");
-		bat.setHealth(batHEALTH); bat.setAttack(batATTACK);
-		
 		gui.addImage(hero);
-		gui.addImage(skeleton);
-		gui.addImage(bat);
+		
+		// Adding Skeletons
+		skeletonList = levelReader.readEntity(floor, "Skeleton");
+		for(Entity skeleton : skeletonList) {
+			skeleton.setAttack(skeletonATTACK); skeleton.setHealth(skeletonHEALTH);
+			gui.addImage(skeleton);
+		}
+		
+		// Adding Bats
+		batList = levelReader.readEntity(floor, "Bat");
+		for(Entity bat : batList) {
+			bat.setAttack(batATTACK); bat.setHealth(batHEALTH);
+			gui.addImage(bat);
+		}
+		
+		// Adding Thugs
+		thugList = levelReader.readEntity(floor, "Thug");
+		for(Entity thug : thugList) {
+			thug.setAttack(thugATTACK); thug.setHealth(thugHEALTH);
+			gui.addImage(thug);
+		}
+		
 	}
 	
 	@Override
@@ -114,19 +133,22 @@ public class EngineExample implements Observer {
 			break;
 		}
 				
-		
 		// Skeleton Movement
-		Direction skeletonDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
-		if ( turns % 2 != 0 ) {
-			skeleton.move(skeletonDirection, GRID_WIDTH, GRID_HEIGHT);
+		for(Entity skeleton : skeletonList) {
+			Direction skeletonDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
+			if ( turns % 2 != 0 ) {
+				skeleton.move(skeletonDirection, GRID_WIDTH, GRID_HEIGHT);
+			}
 		}
 		
-		// Bat Movement (still doesn't check for walls
-		if ((int)(Math.random() * 2) == 1) {
-			Direction batDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
-			bat.move(batDirection, GRID_WIDTH, GRID_HEIGHT);
-		}else {
-			bat.move(Direction.random(), GRID_WIDTH, GRID_HEIGHT);
+		// Bat Movement (still doesn't check for walls)
+		for(Entity bat : batList) {
+			if ((int)(Math.random() * 2) == 1) { // 50% chance
+				Direction batDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
+				bat.move(batDirection, GRID_WIDTH, GRID_HEIGHT);
+			}else {
+				bat.move(Direction.random(), GRID_WIDTH, GRID_HEIGHT);
+			}
 		}
 		
 		// Updates Status Message

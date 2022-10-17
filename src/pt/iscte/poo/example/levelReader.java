@@ -3,6 +3,7 @@ package pt.iscte.poo.example;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import pt.iscte.poo.utils.Point2D;
@@ -49,9 +50,9 @@ public class levelReader {
 		
 	}
 	
-	public static Entity EntityReader(String filePath, String EntityName) {
+	public static List<Entity> readEntity(String filePath, String EntityName) {
 		
-		Entity returnEntity = null;
+		List<Entity> returnEntityList = new ArrayList<>();
 		
 		try {
 			
@@ -69,8 +70,7 @@ public class levelReader {
 
 				// Checks if read token is the object we are looking for
 				if ( attributes[0].equals(EntityName) ) {
-					
-					returnEntity =  new Entity( EntityName, new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2])) , 0, 0);
+					returnEntityList.add(new Entity( EntityName, new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2])) , 0, 0));
 				}
 				
 			}
@@ -78,7 +78,7 @@ public class levelReader {
 		} catch (FileNotFoundException e) {
 			System.err.println("File not Found");		
 		}
-		return returnEntity;
+		return returnEntityList;
 	}
 	
 	
