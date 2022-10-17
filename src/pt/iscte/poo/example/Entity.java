@@ -3,7 +3,7 @@ package pt.iscte.poo.example;
 import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
 
-public abstract class Entity extends GameElement{
+public class Entity extends GameElement{
 	
 	// Entities exclusive attributes
 	public int health;
@@ -23,6 +23,14 @@ public abstract class Entity extends GameElement{
 	
 	public int getAttack() {
 		return attack;
+	}
+	// Setters
+	public void setHealth(int health) {
+		this.health = health;
+	}
+	
+	public void setAttack(int attack) {
+		this.attack = attack;
 	}
 	
 	// Entity related methods
