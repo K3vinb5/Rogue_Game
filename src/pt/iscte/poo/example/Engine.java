@@ -12,65 +12,76 @@ import pt.iscte.poo.utils.Vector2D;
 import java.awt.event.KeyEvent;
 
 
-public class EngineExample implements Observer {
+public class Engine implements Observer {
 
 	// Window Attributes and others...
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
-	private static EngineExample INSTANCE = null;
+	public static final int GRID_HEALTH = 1;
+	private static Engine INSTANCE = null;
 	private ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
 	// Hero related attributes
 	private Entity hero;
 	private final int heroHEALTH = 10;
 	private final int heroATTACK = 1;
 	// Skeleton related attributes
-	private List<Entity> skeletonList;
-	private final int skeletonHEALTH = 5;
-	private final int skeletonATTACK = 1;
+	private List<Skeleton> skeletonList;
 	//Bat related attributes
-	private List<Entity> batList;
-	private final int batHEALTH = 3;
-	private final int batATTACK = 1;
+	private List<Bat> batList;
 	// Thug related attributes
-	private List<Entity> thugList;
-	private final int thugHEALTH = 10;
-	private final int thugATTACK = 3;
+	private List<Thug> thugList;
 	//Other attributes (Used for game logic)
 	private int turns;
-	private static boolean[][] mapOccupied = new boolean[GRID_WIDTH][GRID_HEIGHT];
+	private static List<GameElement> elementList = new ArrayList<>();
 	
-	public static EngineExample getInstance() {
+	
+//	private static boolean[][] mapOccupied = new boolean[GRID_WIDTH][GRID_HEIGHT];
+//	
+//
+//	public static boolean getMapOccupied(int x, int y) {
+//		return mapOccupied[x][y];
+//	}
+//
+//	public static void setMapOccupied(boolean value, int x, int y) {
+//		mapOccupied[x][y] = value;
+//	}
+//	
+//	// Updates Position
+//	public static void updateMapOccupied(Point2D oldPosition, Point2D newPosition) {
+//		setMapOccupied(false,oldPosition.getX() ,oldPosition.getY() );
+//		setMapOccupied(true, newPosition.getX(), newPosition.getY());
+//	}
+	
+	//Still needs Layer checking and "items stuff"
+	public static boolean isValid(Point2D position) {
+		
+		for (GameElement g : elementList) {
+			if ( position.equals(g.getPosition()) ) 
+				return false;
+		}
+		return true;
+	}
+	
+	public static Engine getInstance() {
 		if (INSTANCE == null)
-			INSTANCE = new EngineExample();
+			INSTANCE = new Engine();
 		return INSTANCE;
 	}
-
-	public static boolean getMapOccupied(int x, int y) {
-		return mapOccupied[x][y];
-	}
-
-	public static void setMapOccupied(boolean value, int x, int y) {
-		mapOccupied[x][y] = value;
-	}
 	
-	
-	private EngineExample() {	
-		
-		for (int x=0; x!=GRID_WIDTH; x++)
-			for (int y=0; y!=GRID_HEIGHT; y++)
-				mapOccupied[x][y] = false;
-		
+	private Engine() {		
 		gui.registerObserver(this);
-		gui.setSize(GRID_WIDTH, GRID_HEIGHT);
+		gui.setSize(GRID_WIDTH, GRID_HEIGHT + GRID_HEALTH);
 		gui.go();
 	}
 
 	public void start() {
+		//elementList = new ArrayList<>();
 		// temporary
-		int startingFloor = 0;
+		int startingFloor = 3;
 		addFloor();
 		addObjects("rooms//room" + startingFloor + ".txt");
 		addWall("rooms//room" + startingFloor + ".txt");
+		addHealthBar();
 		gui.setStatusMessage("Turns:" + turns);
 		gui.update();
 	}
@@ -90,35 +101,56 @@ public class EngineExample implements Observer {
 	
 		for (Wall w : wallList) {
 			tileList.add(w);
-			setMapOccupied(true, w.getPosition().getX(), w.getPosition().getY());
+			elementList.add(w);
 		}
 
 		gui.addImages(tileList);
 	}
 	
+	private void addHealthBar() {
+		List<ImageTile>  tileList = new ArrayList<>();
+		for (int x = 0; x!= GRID_WIDTH; x++)
+			for (int y = GRID_HEIGHT; y != GRID_HEIGHT + GRID_HEALTH; y++)
+				tileList.add( new HealthBar(new Point2D(x, y)) );
+		gui.addImages(tileList);
+	}
+	
 	private void addObjects(String floor) {
+		// Auxiliary variable
+		List<Entity> entityList;
+		
 		// Adding Hero
 		hero = new Hero("Hero", new Point2D(4,4), heroHEALTH, heroATTACK);
+		elementList.add(hero);
 		gui.addImage(hero);
 		
 		// Adding Skeletons
-		skeletonList = levelReader.readEntity(floor, "Skeleton");
-		for(Entity skeleton : skeletonList) {
-			skeleton.setAttack(skeletonATTACK); skeleton.setHealth(skeletonHEALTH);
+		skeletonList = new ArrayList<>();
+		entityList = levelReader.readEntity(floor, "Skeleton");
+		for(Entity e : entityList) {
+			Skeleton skeleton = Skeleton.createSkeletonFromEntity(e);
+			skeletonList.add(skeleton);
+			elementList.add(skeleton);
 			gui.addImage(skeleton);
 		}
 		
 		// Adding Bats
-		batList = levelReader.readEntity(floor, "Bat");
-		for(Entity bat : batList) {
-			bat.setAttack(batATTACK); bat.setHealth(batHEALTH);
+		batList = new ArrayList<>();
+		entityList = levelReader.readEntity(floor, "Bat");
+		for(Entity e : entityList) {
+			Bat bat = Bat.createbatFromEntity(e);
+			batList.add(bat);
+			elementList.add(bat);
 			gui.addImage(bat);
 		}
 		
 		// Adding Thugs
-		thugList = levelReader.readEntity(floor, "Thug");
-		for(Entity thug : thugList) {
-			thug.setAttack(thugATTACK); thug.setHealth(thugHEALTH);
+		thugList = new ArrayList<>();
+		entityList = levelReader.readEntity(floor, "Thug");
+		for(Entity e : entityList) {
+			Thug thug = Thug.createthugFromEntity(e);
+			thugList.add(thug);
+			elementList.add(thug);
 			gui.addImage(thug);
 		}
 		
@@ -152,7 +184,7 @@ public class EngineExample implements Observer {
 		}
 				
 		// Skeletons Movement
-		for(Entity skeleton : skeletonList) {
+		for(Skeleton skeleton : skeletonList) {
 			Direction skeletonDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
 			if ( turns % 2 != 0 ) {
 				skeleton.move(skeletonDirection);
@@ -160,7 +192,7 @@ public class EngineExample implements Observer {
 		}
 		
 		// Bats Movement (still doesn't check for walls)
-		for(Entity bat : batList) {
+		for(Bat bat : batList) {
 			if ((int)(Math.random() * 2) == 1) { // 50/50 chance
 				Direction batDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
 				bat.move(batDirection);
@@ -169,6 +201,11 @@ public class EngineExample implements Observer {
 				bat.move(randomDirection);
 			}
 		}
+		
+		
+		//Thug movement still needs implementing
+		
+		
 		
 		// Updates Status Message
 		gui.setStatusMessage("Turns" + turns);

@@ -9,9 +9,9 @@ public class Skeleton extends Entity{
 		super(name, position, 5, 1);
 	}
 	
-
-	@Override
-	public String toString() {
-		return "Name: " + this.getName() + " X: " + this.getPosition().getX() + " Y: " + this.getPosition().getY();
+	public static Skeleton createSkeletonFromEntity(Entity entity) {
+		return new Skeleton(entity.getName(), entity.getPosition());
 	}
+
+
 }

@@ -34,5 +34,7 @@ public abstract class GameElement implements ImageTile{
 		this.position = position;
 	}
 	
-	
+	public void setName(String name) {
+		this.name = name;
+	}
 }

@@ -25,7 +25,7 @@ public class levelReader {
 			// Reads Level
 			while(scanner.hasNextLine()) {
 				
-				if (j > EngineExample.GRID_HEIGHT ) {break;} 
+				if (j > Engine.GRID_HEIGHT ) {break;} 
 				
 				String line = scanner.nextLine();
 				char[] lineArray = line.toCharArray();
@@ -60,7 +60,7 @@ public class levelReader {
 			Scanner scanner = new Scanner(file);
 			
 			// We skip the Grid related information
-			for (int i = 0; i < EngineExample.GRID_HEIGHT; i++) {
+			for (int i = 0; i < Engine.GRID_HEIGHT; i++) {
 				scanner.nextLine();
 			}
 			

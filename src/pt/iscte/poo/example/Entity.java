@@ -3,7 +3,7 @@ package pt.iscte.poo.example;
 import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
 
-public class Entity extends GameElement{
+public class Entity extends GameElement {
 	
 	// Entities exclusive attributes
 	public int health;
@@ -35,19 +35,13 @@ public class Entity extends GameElement{
 	
 	// Entity related methods
 	public void move(Direction d) {
-		//Update Later
-		int oldPositionX = this.getPosition().getX();
-		int oldPositionY = this.getPosition().getY();
+
 		Point2D newPosition = this.getPosition().plus(d.asVector());
-		int newPositionX = newPosition.getX();
-		int newPositionY= newPosition.getY();
-		boolean withinBounds = (newPositionX < EngineExample.GRID_WIDTH && newPositionY < EngineExample.GRID_HEIGHT && newPositionX >= 0 && newPositionY >= 0);
+		boolean withinBounds = (newPosition.getX() < Engine.GRID_WIDTH && newPosition.getY() < Engine.GRID_HEIGHT && newPosition.getX() >= 0 && newPosition.getY() >= 0);
 		
-		//Checks if new position is valid
-		if  (withinBounds && !(EngineExample.getMapOccupied(newPositionX, newPositionY)) ){
+		//Checks if new position is valid and updates matrix that keeps track of occupied positions in the map
+		if  (withinBounds && Engine.isValid(newPosition)){
 			this.setPosition(newPosition);
-			EngineExample.setMapOccupied(false,oldPositionX ,oldPositionY );
-			EngineExample.setMapOccupied(true, newPositionX, newPositionY);
 		}
 	}
 	
@@ -55,6 +49,11 @@ public class Entity extends GameElement{
 	@Override
 	public int getLayer() {
 		return 0;
+	}
+	
+	@Override
+	public String toString() {
+		return "Name: " + this.getName() + " X: " + this.getPosition().getX() + " Y: " + this.getPosition().getY();
 	}
 		
 }
