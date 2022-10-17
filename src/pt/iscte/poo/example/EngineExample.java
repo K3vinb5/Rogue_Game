@@ -38,7 +38,7 @@ public class EngineExample implements Observer {
 	public void start() {
 		addFloor();
 		addObjects();
-		gui.setStatusMessage("ROGUE Starter Package - Turns:" + turns);
+		gui.setStatusMessage("Turns:" + turns);
 		gui.update();
 	}
 	
@@ -51,42 +51,47 @@ public class EngineExample implements Observer {
 	}
 	
 	private void addObjects() {
-		hero = new Hero(new Point2D(4,4));
+		hero = new Hero("Hero", new Point2D(4,4), 0, 10, 1);
 		gui.addImage(hero);
 	}
 	
 	@Override
 	public void update(Observed source) {
 		
-		int key = ((ImageMatrixGUI) source).keyPressed();
-		
-//		if (key == KeyEvent.VK_ENTER) {		
-//			hero.move();
-//			turns++;
-//		}
-		
-		switch (key) {
+		// Hero Movement
+		int keyPressed = ((ImageMatrixGUI) source).keyPressed();
+				
+		switch (keyPressed) {
 		case KeyEvent.VK_UP:
-			hero.move(Direction.UP);
+			hero.move(Direction.UP, GRID_WIDTH, GRID_HEIGHT);
 			turns++;
 			break;
 		case KeyEvent.VK_LEFT:
-			hero.move(Direction.LEFT);
+			hero.move(Direction.LEFT, GRID_WIDTH, GRID_HEIGHT);
 			turns++;
 			break;
 		case KeyEvent.VK_RIGHT:
-			hero.move(Direction.RIGHT);
+			hero.move(Direction.RIGHT, GRID_WIDTH, GRID_HEIGHT);
 			turns++;
 			break;
 		case KeyEvent.VK_DOWN:
-			hero.move(Direction.DOWN);
+			hero.move(Direction.DOWN, GRID_WIDTH, GRID_HEIGHT);
 			turns++;
 			break;
 		default:
 			break;
 		}
 		
-		gui.setStatusMessage("ROGUE Starter Package - Turns:" + turns);
+		//Skeleton Movement
+		
+		// if turns%2 != 0 (odd turns)
+		
+		// Updates Status Message
+		gui.setStatusMessage("Turns" + turns);
+		
+		
+		
+		// Updates Graphical User Interface
 		gui.update();
 	}
 }
