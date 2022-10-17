@@ -37,7 +37,7 @@ public class EngineExample implements Observer {
 	private final int thugATTACK = 3;
 	//Other attributes (Used for game logic)
 	private int turns;
-	private boolean[][] mapOccupied= new boolean[GRID_WIDTH][GRID_HEIGHT];
+	private static boolean[][] mapOccupied = new boolean[GRID_WIDTH][GRID_HEIGHT];
 	
 	public static EngineExample getInstance() {
 		if (INSTANCE == null)
@@ -45,12 +45,12 @@ public class EngineExample implements Observer {
 		return INSTANCE;
 	}
 
-	public boolean getMapOccupied(int x, int y) {
-		return this.mapOccupied[x][y];
+	public static boolean getMapOccupied(int x, int y) {
+		return mapOccupied[x][y];
 	}
 
-	public void setMapOccupied(boolean value, int x, int y) {
-		this.mapOccupied[x][y] = value;
+	public static void setMapOccupied(boolean value, int x, int y) {
+		mapOccupied[x][y] = value;
 	}
 	
 	
@@ -90,7 +90,7 @@ public class EngineExample implements Observer {
 	
 		for (Wall w : wallList) {
 			tileList.add(w);
-			
+			setMapOccupied(true, w.getPosition().getX(), w.getPosition().getY());
 		}
 
 		gui.addImages(tileList);
