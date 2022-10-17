@@ -77,7 +77,7 @@ public class Engine implements Observer {
 	public void start() {
 		//elementList = new ArrayList<>();
 		// temporary
-		int startingFloor = 3;
+		int startingFloor = 0;
 		addFloor();
 		addObjects("rooms//room" + startingFloor + ".txt");
 		addWall("rooms//room" + startingFloor + ".txt");
