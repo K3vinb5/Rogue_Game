@@ -31,26 +31,9 @@ public class Engine implements Observer {
 	// Thug related attributes
 	private List<Thug> thugList;
 	//Other attributes (Used for game logic)
-	private int turns;
+	private static int turns;
 	private static List<GameElement> elementList = new ArrayList<>();
-	
-	
-//	private static boolean[][] mapOccupied = new boolean[GRID_WIDTH][GRID_HEIGHT];
-//	
-//
-//	public static boolean getMapOccupied(int x, int y) {
-//		return mapOccupied[x][y];
-//	}
-//
-//	public static void setMapOccupied(boolean value, int x, int y) {
-//		mapOccupied[x][y] = value;
-//	}
-//	
-//	// Updates Position
-//	public static void updateMapOccupied(Point2D oldPosition, Point2D newPosition) {
-//		setMapOccupied(false,oldPosition.getX() ,oldPosition.getY() );
-//		setMapOccupied(true, newPosition.getX(), newPosition.getY());
-//	}
+	private static List<Entity> entityList = new ArrayList<>();
 	
 	//Still needs Layer checking and "items stuff"
 	public static boolean isValid(Point2D position) {
@@ -60,6 +43,36 @@ public class Engine implements Observer {
 				return false;
 		}
 		return true;
+	}
+	
+	public static List<GameElement> getElementList() {
+		return elementList;
+	}
+	
+	public static List<Entity> getEntityList() {
+		return entityList;
+	}
+	
+	public static int getTurns() {
+		return turns;
+	}
+	
+	private void setHeroHealth(int newHealth) {
+		System.out.println("Hero's new health is " + newHealth);
+		if ( newHealth <= 0) {
+			System.exit(0);
+		}else {
+			hero.setHealth(newHealth);
+		}
+	}
+	
+	private void setEnemyHealth (int newHealth) {
+		System.out.println("Enemy's new health is: " + newHealth);
+		if ( newHealth <= 0 ) {
+			System.exit(0);
+		}else {
+			hero.setHealth(newHealth);
+		}
 	}
 	
 	public static Engine getInstance() {
@@ -75,7 +88,6 @@ public class Engine implements Observer {
 	}
 
 	public void start() {
-		//elementList = new ArrayList<>();
 		// temporary
 		int startingFloor = 0;
 		addFloor();
@@ -117,39 +129,43 @@ public class Engine implements Observer {
 	
 	private void addObjects(String floor) {
 		// Auxiliary variable
-		List<Entity> entityList;
+		List<Entity> levelEntityList;
 		
 		// Adding Hero
 		hero = new Hero("Hero", new Point2D(4,4), heroHEALTH, heroATTACK);
 		elementList.add(hero);
+		entityList.add(hero);
 		gui.addImage(hero);
 		
-		// Adding Skeletons
+		// Adding Level Skeletons
 		skeletonList = new ArrayList<>();
-		entityList = levelReader.readEntity(floor, "Skeleton");
-		for(Entity e : entityList) {
+		levelEntityList = levelReader.readEntity(floor, "Skeleton");
+		for(Entity e : levelEntityList) {
 			Skeleton skeleton = Skeleton.createSkeletonFromEntity(e);
 			skeletonList.add(skeleton);
+			entityList.add(skeleton);
 			elementList.add(skeleton);
 			gui.addImage(skeleton);
 		}
 		
-		// Adding Bats
+		// Adding Level Bats
 		batList = new ArrayList<>();
-		entityList = levelReader.readEntity(floor, "Bat");
-		for(Entity e : entityList) {
-			Bat bat = Bat.createbatFromEntity(e);
+		levelEntityList = levelReader.readEntity(floor, "Bat");
+		for(Entity e : levelEntityList) {
+			Bat bat = Bat.createBatFromEntity(e);
 			batList.add(bat);
+			entityList.add(bat);
 			elementList.add(bat);
 			gui.addImage(bat);
 		}
 		
-		// Adding Thugs
+		// Adding Level Thugs
 		thugList = new ArrayList<>();
-		entityList = levelReader.readEntity(floor, "Thug");
-		for(Entity e : entityList) {
+		levelEntityList = levelReader.readEntity(floor, "Thug");
+		for(Entity e : levelEntityList) {
 			Thug thug = Thug.createthugFromEntity(e);
 			thugList.add(thug);
+			entityList.add(thug);
 			elementList.add(thug);
 			gui.addImage(thug);
 		}
@@ -161,9 +177,11 @@ public class Engine implements Observer {
 		
 		// Hero Movement
 		int keyPressed = ((ImageMatrixGUI) source).keyPressed();
-				
+		Direction newDirection;
+		Point2D  position;
 		switch (keyPressed) {
 		case KeyEvent.VK_UP:
+			newDirection =
 			hero.move(Direction.UP);
 			turns++;
 			break;
@@ -185,26 +203,27 @@ public class Engine implements Observer {
 				
 		// Skeletons Movement
 		for(Skeleton skeleton : skeletonList) {
-			Direction skeletonDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
-			if ( turns % 2 != 0 ) {
-				skeleton.move(skeletonDirection);
-			}
+			Direction newDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
+			Point2D newPosition = skeleton.getPosition().plus(newDirection.asVector());
+			skeleton.move(newDirection);
+			if (Enemy.isHero(newPosition))
+				setHeroHealth(hero.getHealth() - skeleton.getAttack());
 		}
 		
 		// Bats Movement (still doesn't check for walls)
 		for(Bat bat : batList) {
-			if ((int)(Math.random() * 2) == 1) { // 50/50 chance
-				Direction batDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
-				bat.move(batDirection);
-			}else {
-				Direction randomDirection = Direction.random();
-				bat.move(randomDirection);
-			}
+			Direction newDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
+			Point2D newPosition = bat.getPosition().plus(newDirection.asVector());
+			bat.move(newDirection);
+			if (Enemy.isHero(newPosition))
+				setHeroHealth(hero.getHealth() - bat.getAttack());
 		}
 		
 		
-		//Thug movement still needs implementing
-		
+//		Thug movement still needs implementing
+//		for (Thug t : thugList) {
+//			
+//		}
 		
 		
 		// Updates Status Message

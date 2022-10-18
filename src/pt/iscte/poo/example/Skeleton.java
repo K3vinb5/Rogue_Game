@@ -1,8 +1,9 @@
 package pt.iscte.poo.example;
 
+import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
 
-public class Skeleton extends Entity{
+public class Skeleton extends Enemy{
 
 	// Skeleton Constructor
 	public Skeleton(String name, Point2D position) {
@@ -13,5 +14,12 @@ public class Skeleton extends Entity{
 		return new Skeleton(entity.getName(), entity.getPosition());
 	}
 
+	@Override
+	public void move(Direction d) {
+		if ( Engine.getTurns() % 2 != 0 ) {
+			super.move(d);
+		}
 
+	}
+	
 }

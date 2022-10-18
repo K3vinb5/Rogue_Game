@@ -1,7 +1,7 @@
 package pt.iscte.poo.example;
 
-import java.util.ArrayList;
-import java.util.List;
+//import java.util.ArrayList;
+//import java.util.List;
 
 import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
@@ -46,23 +46,6 @@ public class Entity extends GameElement {
 		if  (withinBounds && Engine.isValid(newPosition)){
 			this.setPosition(newPosition);
 		}
-	}
-	
-	public List<Point2D> checkSurrounding() {
-		
-		List<Point2D> returnPositions = new ArrayList<>();
-		
-		List<Direction> directionarray = new ArrayList<>();
-		directionarray.add(Direction.DOWN);
-		directionarray.add(Direction.LEFT);
-		directionarray.add(Direction.RIGHT);
-		directionarray.add(Direction.UP);
-		
-		for (Direction d : directionarray) {
-			Point2D position = getPosition().plus(d.asVector());
-			returnPositions.add(position);
-		}
-		return returnPositions;
 	}
 	
 	
