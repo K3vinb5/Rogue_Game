@@ -178,10 +178,10 @@ public class Engine implements Observer {
 		// Hero Movement
 		int keyPressed = ((ImageMatrixGUI) source).keyPressed();
 		Direction newDirection;
-		Point2D  position;
+		Point2D  newPosition;
 		switch (keyPressed) {
 		case KeyEvent.VK_UP:
-			newDirection =
+			//newDirection =
 			hero.move(Direction.UP);
 			turns++;
 			break;
@@ -203,8 +203,8 @@ public class Engine implements Observer {
 				
 		// Skeletons Movement
 		for(Skeleton skeleton : skeletonList) {
-			Direction newDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
-			Point2D newPosition = skeleton.getPosition().plus(newDirection.asVector());
+			newDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
+			newPosition = skeleton.getPosition().plus(newDirection.asVector());
 			skeleton.move(newDirection);
 			if (Enemy.isHero(newPosition))
 				setHeroHealth(hero.getHealth() - skeleton.getAttack());
@@ -212,8 +212,8 @@ public class Engine implements Observer {
 		
 		// Bats Movement (still doesn't check for walls)
 		for(Bat bat : batList) {
-			Direction newDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
-			Point2D newPosition = bat.getPosition().plus(newDirection.asVector());
+			newDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
+			newPosition = bat.getPosition().plus(newDirection.asVector());
 			bat.move(newDirection);
 			if (Enemy.isHero(newPosition))
 				setHeroHealth(hero.getHealth() - bat.getAttack());
