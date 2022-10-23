@@ -14,7 +14,7 @@ public class Entity extends GameElement {
 	
 	// Entity Constructor
 	public Entity(String name, Point2D position, int health, int attack) {
-		super(name, position, 0);
+		super(name, position, 1);
 		this.health = health;
 		this.attack = attack;
 	}

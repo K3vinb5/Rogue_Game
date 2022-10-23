@@ -20,20 +20,26 @@ public class Engine implements Observer {
 	public static final int GRID_HEALTH = 1;
 	private static Engine INSTANCE = null;
 	private ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
+	
 	// Hero related attributes
-	private Entity hero;
+	private Hero hero;
 	private final int heroHEALTH = 10;
 	private final int heroATTACK = 1;
+	
 	// Skeleton related attributes
 	private List<Skeleton> skeletonList;
+	
 	//Bat related attributes
 	private List<Bat> batList;
+	
 	// Thug related attributes
 	private List<Thug> thugList;
-	//Other attributes (Used for game logic)
+	
+	//Other attributes (Used for storing information)
 	private static int turns;
 	private static List<GameElement> elementList = new ArrayList<>();
 	private static List<Entity> entityList = new ArrayList<>();
+	
 	
 	//Still needs Layer checking and "items stuff"
 	public static boolean isValid(Point2D position) {
@@ -57,30 +63,35 @@ public class Engine implements Observer {
 		return turns;
 	}
 	
-	private void setHeroHealth(int newHealth) {
-		System.out.println("Hero's new health is " + newHealth);
-		if ( newHealth <= 0) {
-			System.exit(0);
+	//Probably only need the position, still have to think about it
+	public static Entity getEntityAt(Point2D position, String name) {
+		for (Entity e: getEntityList()) {
+			if (e.getPosition().equals(position) || e.getName().equals(name)) {
+				return e;
+		};
+	}
+		return null;
+	}
+		
+	public static void  setEntityHealth(int attack, String name, Point2D position) {
+		Entity e = getEntityAt(position, name);
+		int newHealth = e.getHealth() - attack;;
+		System.out.println(e.getName() + " new health is " + newHealth);
+		if (newHealth <= 0) {
+			//remove sprite and remove entity from lists
 		}else {
-			hero.setHealth(newHealth);
+			e.setHealth(newHealth);
+
 		}
 	}
-	
-	private void setEnemyHealth (int newHealth) {
-		System.out.println("Enemy's new health is: " + newHealth);
-		if ( newHealth <= 0 ) {
-			System.exit(0);
-		}else {
-			hero.setHealth(newHealth);
-		}
-	}
+
 	
 	public static Engine getInstance() {
 		if (INSTANCE == null)
 			INSTANCE = new Engine();
 		return INSTANCE;
 	}
-	
+
 	private Engine() {		
 		gui.registerObserver(this);
 		gui.setSize(GRID_WIDTH, GRID_HEIGHT + GRID_HEALTH);
@@ -178,23 +189,25 @@ public class Engine implements Observer {
 		// Hero Movement
 		int keyPressed = ((ImageMatrixGUI) source).keyPressed();
 		Direction newDirection;
-		Point2D  newPosition;
 		switch (keyPressed) {
 		case KeyEvent.VK_UP:
-			//newDirection =
-			hero.move(Direction.UP);
+			newDirection = Direction.UP;
+			hero.move(newDirection);
 			turns++;
 			break;
 		case KeyEvent.VK_LEFT:
-			hero.move(Direction.LEFT);
+			newDirection = Direction.LEFT;
+			hero.move(newDirection);
 			turns++;
 			break;
 		case KeyEvent.VK_RIGHT:
-			hero.move(Direction.RIGHT);
+			newDirection = Direction.RIGHT;
+			hero.move(newDirection);
 			turns++;
 			break;
 		case KeyEvent.VK_DOWN:
-			hero.move(Direction.DOWN);
+			newDirection = Direction.DOWN;
+			hero.move(newDirection);
 			turns++;
 			break;
 		default:
@@ -204,19 +217,14 @@ public class Engine implements Observer {
 		// Skeletons Movement
 		for(Skeleton skeleton : skeletonList) {
 			newDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
-			newPosition = skeleton.getPosition().plus(newDirection.asVector());
 			skeleton.move(newDirection);
-			if (Enemy.isHero(newPosition))
-				setHeroHealth(hero.getHealth() - skeleton.getAttack());
 		}
+
 		
-		// Bats Movement (still doesn't check for walls)
+		// Bats Movement
 		for(Bat bat : batList) {
 			newDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
-			newPosition = bat.getPosition().plus(newDirection.asVector());
 			bat.move(newDirection);
-			if (Enemy.isHero(newPosition))
-				setHeroHealth(hero.getHealth() - bat.getAttack());
 		}
 		
 		
@@ -232,6 +240,8 @@ public class Engine implements Observer {
 		// Updates Graphical User Interface
 		gui.update();
 	}
+		
 
 	
-}
+	
+	}

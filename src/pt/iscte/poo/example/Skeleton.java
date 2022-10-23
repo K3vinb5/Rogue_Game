@@ -16,10 +16,14 @@ public class Skeleton extends Enemy{
 
 	@Override
 	public void move(Direction d) {
+		Point2D newPosition = this.getPosition().plus(d.asVector());
 		if ( Engine.getTurns() % 2 != 0 ) {
 			super.move(d);
+			if (Enemy.isHero(newPosition))
+				Engine.setEntityHealth(this.attack, "Hero", newPosition);
+			}
 		}
 
 	}
 	
-}
+

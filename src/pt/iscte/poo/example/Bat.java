@@ -15,11 +15,15 @@ public class Bat extends Enemy{
 	
 	@Override
 	public void move(Direction d) {
+		Point2D newPosition = this.getPosition().plus(d.asVector());
 		if ((int)(Math.random() * 1000) == 1) { // 50/50 chance
 			super.move(d);
 		}else {
 			Direction randomDirection = Direction.random();
 			super.move(randomDirection);
+			if (Enemy.isHero(newPosition))
+				Engine.setEntityHealth(this.attack, "Hero", newPosition);
+			}
 		}
 	}
-}
+
