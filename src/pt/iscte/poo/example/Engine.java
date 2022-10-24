@@ -72,13 +72,15 @@ public class Engine implements Observer {
 	}
 		return null;
 	}
+	
 		
+	//Will have to rewrite the whole damage system :(
 	public static void  setEntityHealth(int attack, String name, Point2D position) {
 		Entity e = getEntityAt(position, name);
 		int newHealth = e.getHealth() - attack;;
 		System.out.println(e.getName() + " new health is " + newHealth);
 		if (newHealth <= 0) {
-			//remove sprite and remove entity from lists
+			//I will need to alter this function into non static
 		}else {
 			e.setHealth(newHealth);
 
@@ -240,8 +242,5 @@ public class Engine implements Observer {
 		// Updates Graphical User Interface
 		gui.update();
 	}
-		//ola isto e um teste
-
-	
-	
+		
 	}
