@@ -10,21 +10,18 @@ public class Hero extends Entity{
 		super(name, position, health, attack);
 	}
 	
-<<<<<<< Updated upstream
 	public static boolean IsEnemy(Point2D position) {
 		for (Entity  e : Engine.getEntityList())
 			if (  e.getPosition().equals(position) && !(e.getName().equals("Hero") ) )
 				return true;
 	return false;
 	}
-=======
 //	private boolean IsEnemy(Point2D position) {
 //		for (Entity  e : Engine.getEntityList())
 //			if (  e.getPosition().equals(position) && !(e.getName().equals("Hero") ) )
 //				return true;
 //	return false;
 //	}
->>>>>>> Stashed changes
 	
 	public static Enemy getEnemy(Point2D position) {
 		for (Entity  e : Engine.getEntityList())

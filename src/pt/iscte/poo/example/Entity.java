@@ -47,13 +47,9 @@ public class Entity extends GameElement {
 			this.setPosition(newPosition);
 		}
 	}
-	
-<<<<<<< Updated upstream
-	
-	// Because all entities layers are 0:
-=======
+
+
 	// Because all entities layers are 1:
->>>>>>> Stashed changes
 	@Override
 	public int getLayer() {
 		return 0;

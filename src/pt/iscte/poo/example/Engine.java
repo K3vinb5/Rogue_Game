@@ -44,13 +44,10 @@ public class Engine implements Observer {
 	private static List<Entity> entityList = new ArrayList<>();
 	
 	
-<<<<<<< Updated upstream
 	//Still needs Layer checking and "items stuff"
-=======
 	// - - Methods --
 	
 	//Still needs Layer checking and "items stuff" (Not so sure about this layer checking i wrote some weeks ago)
->>>>>>> Stashed changes
 	public static boolean isValid(Point2D position) {
 		for (GameElement g : elementList) {
 			if ( position.equals(g.getPosition()) ) 
@@ -59,10 +56,10 @@ public class Engine implements Observer {
 		return true;
 	}
 	
-<<<<<<< Updated upstream
 	public static List<GameElement> getElementList() {
 		return elementList;
-=======
+	}
+	
 	//Used localy to get the entity at a given position
 	private Entity getEntityAt(Point2D position) {
 		for (Entity e: entityList) {
@@ -71,7 +68,6 @@ public class Engine implements Observer {
 		};
 	}
 		return null;
->>>>>>> Stashed changes
 	}
 	
 	public static List<Entity> getEntityList() {
@@ -93,7 +89,6 @@ public class Engine implements Observer {
 	}
 	
 		
-<<<<<<< Updated upstream
 	//Will have to rewrite the whole damage system :(
 	public static void  setEntityHealth(int attack, String name, Point2D position) {
 		Entity e = getEntityAt(position, name);
@@ -103,8 +98,8 @@ public class Engine implements Observer {
 			//I will need to alter this function into non static
 		}else {
 			e.setHealth(newHealth);
-
-=======
+		}
+	}
 	//Used locally to update entities health
 	private void attackEntity(Entity attacker, Point2D newPosition) {
 		Entity attacked = getEntityAt(newPosition);
@@ -116,7 +111,6 @@ public class Engine implements Observer {
 				removeFromLists(attacked);
 				gui.update();
 			}
->>>>>>> Stashed changes
 		}
 	}
 
