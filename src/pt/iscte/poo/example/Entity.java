@@ -42,22 +42,21 @@ public class Entity extends GameElement {
 		Point2D newPosition = this.getPosition().plus(d.asVector());
 		boolean withinBounds = (newPosition.getX() < Engine.GRID_WIDTH && newPosition.getY() < Engine.GRID_HEIGHT && newPosition.getX() >= 0 && newPosition.getY() >= 0);
 		
-		//Checks if new position is valid and updates matrix that keeps track of occupied positions in the map
+		//Checks if new position is valid
 		if  (withinBounds && Engine.isValid(newPosition)){
 			this.setPosition(newPosition);
 		}
 	}
 	
+<<<<<<< Updated upstream
 	
 	// Because all entities layers are 0:
+=======
+	// Because all entities layers are 1:
+>>>>>>> Stashed changes
 	@Override
 	public int getLayer() {
 		return 0;
-	}
-	
-	@Override
-	public String toString() {
-		return "Name: " + this.getName() + " X: " + this.getPosition().getX() + " Y: " + this.getPosition().getY();
 	}
 		
 }

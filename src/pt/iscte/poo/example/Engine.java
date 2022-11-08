@@ -1,6 +1,7 @@
 package pt.iscte.poo.example;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import pt.iscte.poo.gui.ImageMatrixGUI;
 import pt.iscte.poo.gui.ImageTile;
@@ -26,6 +27,8 @@ public class Engine implements Observer {
 	private final int heroHEALTH = 10;
 	private final int heroATTACK = 1;
 	
+	//Maybe its not worth it to have multiple lists one for each type of entity, change later
+	
 	// Skeleton related attributes
 	private List<Skeleton> skeletonList;
 	
@@ -41,9 +44,14 @@ public class Engine implements Observer {
 	private static List<Entity> entityList = new ArrayList<>();
 	
 	
+<<<<<<< Updated upstream
 	//Still needs Layer checking and "items stuff"
+=======
+	// - - Methods --
+	
+	//Still needs Layer checking and "items stuff" (Not so sure about this layer checking i wrote some weeks ago)
+>>>>>>> Stashed changes
 	public static boolean isValid(Point2D position) {
-		
 		for (GameElement g : elementList) {
 			if ( position.equals(g.getPosition()) ) 
 				return false;
@@ -51,8 +59,19 @@ public class Engine implements Observer {
 		return true;
 	}
 	
+<<<<<<< Updated upstream
 	public static List<GameElement> getElementList() {
 		return elementList;
+=======
+	//Used localy to get the entity at a given position
+	private Entity getEntityAt(Point2D position) {
+		for (Entity e: entityList) {
+			if ( e.getPosition().equals(position) ) {
+				return e;
+		};
+	}
+		return null;
+>>>>>>> Stashed changes
 	}
 	
 	public static List<Entity> getEntityList() {
@@ -74,6 +93,7 @@ public class Engine implements Observer {
 	}
 	
 		
+<<<<<<< Updated upstream
 	//Will have to rewrite the whole damage system :(
 	public static void  setEntityHealth(int attack, String name, Point2D position) {
 		Entity e = getEntityAt(position, name);
@@ -84,6 +104,19 @@ public class Engine implements Observer {
 		}else {
 			e.setHealth(newHealth);
 
+=======
+	//Used locally to update entities health
+	private void attackEntity(Entity attacker, Point2D newPosition) {
+		Entity attacked = getEntityAt(newPosition);
+		if (attacked != null) {
+			attacked.setHealth(attacked.getHealth() - attacker.getAttack());
+			System.out.println("Attacked health is: " + attacked.getHealth());
+			if ( attacked.getHealth() <= 0 ) {
+				gui.removeImage(attacked);
+				removeFromLists(attacked);
+				gui.update();
+			}
+>>>>>>> Stashed changes
 		}
 	}
 
@@ -140,6 +173,7 @@ public class Engine implements Observer {
 		gui.addImages(tileList);
 	}
 	
+	//Hero's position missing
 	private void addObjects(String floor) {
 		// Auxiliary variable
 		List<Entity> levelEntityList;
@@ -191,25 +225,35 @@ public class Engine implements Observer {
 		// Hero Movement
 		int keyPressed = ((ImageMatrixGUI) source).keyPressed();
 		Direction newDirection;
+		Point2D newPosition;
+		
 		switch (keyPressed) {
 		case KeyEvent.VK_UP:
 			newDirection = Direction.UP;
 			hero.move(newDirection);
+			newPosition = hero.getPosition().plus(newDirection.asVector());
+			attackEntity(hero, newPosition);
 			turns++;
 			break;
 		case KeyEvent.VK_LEFT:
 			newDirection = Direction.LEFT;
 			hero.move(newDirection);
+			newPosition = hero.getPosition().plus(newDirection.asVector());
+			attackEntity(hero, newPosition);
 			turns++;
 			break;
 		case KeyEvent.VK_RIGHT:
 			newDirection = Direction.RIGHT;
 			hero.move(newDirection);
+			newPosition = hero.getPosition().plus(newDirection.asVector());
+			attackEntity(hero, newPosition);
 			turns++;
 			break;
 		case KeyEvent.VK_DOWN:
 			newDirection = Direction.DOWN;
 			hero.move(newDirection);
+			newPosition = hero.getPosition().plus(newDirection.asVector());
+			attackEntity(hero, newPosition);
 			turns++;
 			break;
 		default:
@@ -220,13 +264,16 @@ public class Engine implements Observer {
 		for(Skeleton skeleton : skeletonList) {
 			newDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
 			skeleton.move(newDirection);
+			newPosition = skeleton.getPosition().plus(newDirection.asVector());
+			attackEntity(skeleton, newPosition);
 		}
-
 		
 		// Bats Movement
 		for(Bat bat : batList) {
 			newDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
 			bat.move(newDirection);
+			newPosition = bat.getPosition().plus(newDirection.asVector());
+			attackEntity(bat, newPosition);
 		}
 		
 		
@@ -242,5 +289,30 @@ public class Engine implements Observer {
 		// Updates Graphical User Interface
 		gui.update();
 	}
+	
+	private void removeFromLists(Entity e) {
+		skeletonList.remove(e);
+		batList.remove(e);
+		thugList.remove(e);
+		elementList.remove(e);
+		entityList.remove(e);
+	}
+	
+	//Removes all gameElements and cleans all Lists. (A bit messy)
+//	private void removeObjects() {
+//		for (GameElement e : elementList)
+//			gui.removeImage(e);
+//		
+//		Iterator<GameElement> it = elementList.iterator();
+//		while(it.hasNext()) {it.remove();}
+//		Iterator<Entity> it1 = entityList.iterator();
+//		while(it1.hasNext()) {it1.remove();}
+//		Iterator<Skeleton> it2 = skeletonList.iterator();
+//		while(it2.hasNext()) {it2.remove();}
+//		Iterator<Bat> it3 = batList.iterator();
+//		while(it3.hasNext()) {it3.remove();}
+//		Iterator<Thug> it4 = thugList.iterator();
+//		while(it4.hasNext()) {it4.remove();}
+//	}
 		
 	}

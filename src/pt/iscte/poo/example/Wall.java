@@ -15,9 +15,4 @@ public class Wall extends GameElement{
 		return 0;
 	}
 	
-	//temp
-	@Override
-	public String toString() {
-		return "X: " + this.getPosition().getX() + " Y: " + this.getPosition().getY();
-	}
 }
