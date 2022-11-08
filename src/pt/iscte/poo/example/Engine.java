@@ -1,7 +1,7 @@
 package pt.iscte.poo.example;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+//import java.util.Iterator;
 import java.util.List;
 import pt.iscte.poo.gui.ImageMatrixGUI;
 import pt.iscte.poo.gui.ImageTile;
@@ -88,24 +88,12 @@ public class Engine implements Observer {
 		return null;
 	}
 	
-		
-	//Will have to rewrite the whole damage system :(
-	public static void  setEntityHealth(int attack, String name, Point2D position) {
-		Entity e = getEntityAt(position, name);
-		int newHealth = e.getHealth() - attack;;
-		System.out.println(e.getName() + " new health is " + newHealth);
-		if (newHealth <= 0) {
-			//I will need to alter this function into non static
-		}else {
-			e.setHealth(newHealth);
-		}
-	}
 	//Used locally to update entities health
 	private void attackEntity(Entity attacker, Point2D newPosition) {
 		Entity attacked = getEntityAt(newPosition);
 		if (attacked != null) {
 			attacked.setHealth(attacked.getHealth() - attacker.getAttack());
-			System.out.println("Attacked health is: " + attacked.getHealth());
+			System.out.println(attacked.getName() + " health is: " + attacked.getHealth());
 			if ( attacked.getHealth() <= 0 ) {
 				gui.removeImage(attacked);
 				removeFromLists(attacked);
