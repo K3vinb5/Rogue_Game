@@ -6,7 +6,7 @@ package pt.iscte.poo.example;
 import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
 
-public class Entity extends GameElement {
+public abstract class Entity extends GameElement {
 	
 	// Entities exclusive attributes
 	public int health;
@@ -43,11 +43,10 @@ public class Entity extends GameElement {
 		boolean withinBounds = (newPosition.getX() < Engine.GRID_WIDTH && newPosition.getY() < Engine.GRID_HEIGHT && newPosition.getX() >= 0 && newPosition.getY() >= 0);
 		
 		//Checks if new position is valid
-		if  (withinBounds && Engine.isValid(newPosition)){
+		if  (withinBounds && Engine.getLevel().isValid(newPosition) ){
 			this.setPosition(newPosition);
 		}
 	}
-
 
 	// Because all entities layers are 1:
 	@Override

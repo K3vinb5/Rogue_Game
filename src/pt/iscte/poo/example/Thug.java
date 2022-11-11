@@ -4,11 +4,11 @@ import pt.iscte.poo.utils.Point2D;
 
 public class Thug extends Enemy{
 
-	public Thug(String name, Point2D position) {
-		super(name, position, 10, 3);
+	public Thug( Point2D position) {
+		super("Thug", position, 10, 3);
 	}
 
-	public static Thug createthugFromEntity(Entity entity) {
-		return new Thug(entity.getName(), entity.getPosition());
-	}
+//	public static Thug createthugFromEntity(Entity entity) {
+//		return new Thug(entity.getName(), entity.getPosition());
+//	}
 }

@@ -16,92 +16,21 @@ import java.awt.event.KeyEvent;
 public class Engine implements Observer {
 
 	// Window Attributes and others...
+	private static Engine INSTANCE = null;
+	private ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
 	public static final int GRID_HEALTH = 1;
-	private static Engine INSTANCE = null;
-	private ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
 	
-	// Hero related attributes
+	// Other Attributes
 	private Hero hero;
-	private final int heroHEALTH = 10;
-	private final int heroATTACK = 1;
-	
-	//Maybe its not worth it to have multiple lists one for each type of entity, change later
-	
-	// Skeleton related attributes
-	private List<Skeleton> skeletonList;
-	
-	//Bat related attributes
-	private List<Bat> batList;
-	
-	// Thug related attributes
-	private List<Thug> thugList;
+	private static List<Level> levelList = new ArrayList<>();
+	private static int currentFloor;
 	
 	//Other attributes (Used for storing information)
 	private static int turns;
-	private static List<GameElement> elementList = new ArrayList<>();
-	private static List<Entity> entityList = new ArrayList<>();
 	
-	
-	//Still needs Layer checking and "items stuff"
 	// - - Methods --
-	
-	//Still needs Layer checking and "items stuff" (Not so sure about this layer checking i wrote some weeks ago)
-	public static boolean isValid(Point2D position) {
-		for (GameElement g : elementList) {
-			if ( position.equals(g.getPosition()) ) 
-				return false;
-		}
-		return true;
-	}
-	
-	public static List<GameElement> getElementList() {
-		return elementList;
-	}
-	
-	//Used localy to get the entity at a given position
-	private Entity getEntityAt(Point2D position) {
-		for (Entity e: entityList) {
-			if ( e.getPosition().equals(position) ) {
-				return e;
-		};
-	}
-		return null;
-	}
-	
-	public static List<Entity> getEntityList() {
-		return entityList;
-	}
-	
-	public static int getTurns() {
-		return turns;
-	}
-	
-	//Probably only need the position, still have to think about it
-	public static Entity getEntityAt(Point2D position, String name) {
-		for (Entity e: getEntityList()) {
-			if (e.getPosition().equals(position) || e.getName().equals(name)) {
-				return e;
-		};
-	}
-		return null;
-	}
-	
-	//Used locally to update entities health
-	private void attackEntity(Entity attacker, Point2D newPosition) {
-		Entity attacked = getEntityAt(newPosition);
-		if (attacked != null) {
-			attacked.setHealth(attacked.getHealth() - attacker.getAttack());
-			System.out.println(attacked.getName() + " health is: " + attacked.getHealth());
-			if ( attacked.getHealth() <= 0 ) {
-				gui.removeImage(attacked);
-				removeFromLists(attacked);
-				gui.update();
-			}
-		}
-	}
-
 	
 	public static Engine getInstance() {
 		if (INSTANCE == null)
@@ -117,10 +46,12 @@ public class Engine implements Observer {
 
 	public void start() {
 		// temporary
-		int startingFloor = 0;
-		addFloor();
-		addObjects("rooms//room" + startingFloor + ".txt");
-		addWall("rooms//room" + startingFloor + ".txt");
+		hero = new Hero(new Point2D(4,4));
+		currentFloor = 0;
+		for (int i = 0; i < 4; i++)
+			levelList.add(new Level("rooms//room" + currentFloor + ".txt"));
+				addFloor();
+		addObjects(hero);
 		addHealthBar();
 		gui.setStatusMessage("Turns:" + turns);
 		gui.update();
@@ -134,19 +65,6 @@ public class Engine implements Observer {
 		gui.addImages(tileList);
 	}
 	
-	private void addWall(String level) {
-		
-		ArrayList<Wall> wallList = levelReader.readWalls(level);
-		List<ImageTile> tileList = new ArrayList<>();
-	
-		for (Wall w : wallList) {
-			tileList.add(w);
-			elementList.add(w);
-		}
-
-		gui.addImages(tileList);
-	}
-	
 	private void addHealthBar() {
 		List<ImageTile>  tileList = new ArrayList<>();
 		for (int x = 0; x!= GRID_WIDTH; x++)
@@ -156,49 +74,14 @@ public class Engine implements Observer {
 	}
 	
 	//Hero's position missing
-	private void addObjects(String floor) {
-		// Auxiliary variable
-		List<Entity> levelEntityList;
-		
-		// Adding Hero
-		hero = new Hero("Hero", new Point2D(4,4), heroHEALTH, heroATTACK);
-		elementList.add(hero);
-		entityList.add(hero);
+	private void addObjects(Hero hero) {
 		gui.addImage(hero);
-		
-		// Adding Level Skeletons
-		skeletonList = new ArrayList<>();
-		levelEntityList = levelReader.readEntity(floor, "Skeleton");
-		for(Entity e : levelEntityList) {
-			Skeleton skeleton = Skeleton.createSkeletonFromEntity(e);
-			skeletonList.add(skeleton);
-			entityList.add(skeleton);
-			elementList.add(skeleton);
-			gui.addImage(skeleton);
+		getLevel().setHero(hero);
+		// Other Objects
+		for (GameElement g : getLevel().getElementList()) {
+			System.out.println(g.getName());
+			gui.addImage(g);
 		}
-		
-		// Adding Level Bats
-		batList = new ArrayList<>();
-		levelEntityList = levelReader.readEntity(floor, "Bat");
-		for(Entity e : levelEntityList) {
-			Bat bat = Bat.createBatFromEntity(e);
-			batList.add(bat);
-			entityList.add(bat);
-			elementList.add(bat);
-			gui.addImage(bat);
-		}
-		
-		// Adding Level Thugs
-		thugList = new ArrayList<>();
-		levelEntityList = levelReader.readEntity(floor, "Thug");
-		for(Entity e : levelEntityList) {
-			Thug thug = Thug.createthugFromEntity(e);
-			thugList.add(thug);
-			entityList.add(thug);
-			elementList.add(thug);
-			gui.addImage(thug);
-		}
-		
 	}
 	
 	@Override
@@ -206,64 +89,31 @@ public class Engine implements Observer {
 		
 		// Hero Movement
 		int keyPressed = ((ImageMatrixGUI) source).keyPressed();
-		Direction newDirection;
-		Point2D newPosition;
+		moveHero(keyPressed);
+		Direction newDirection;		
+		System.out.println(hero.getName() + hero.getPosition());
 		
-		switch (keyPressed) {
-		case KeyEvent.VK_UP:
-			newDirection = Direction.UP;
-			hero.move(newDirection);
-			newPosition = hero.getPosition().plus(newDirection.asVector());
-			attackEntity(hero, newPosition);
-			turns++;
-			break;
-		case KeyEvent.VK_LEFT:
-			newDirection = Direction.LEFT;
-			hero.move(newDirection);
-			newPosition = hero.getPosition().plus(newDirection.asVector());
-			attackEntity(hero, newPosition);
-			turns++;
-			break;
-		case KeyEvent.VK_RIGHT:
-			newDirection = Direction.RIGHT;
-			hero.move(newDirection);
-			newPosition = hero.getPosition().plus(newDirection.asVector());
-			attackEntity(hero, newPosition);
-			turns++;
-			break;
-		case KeyEvent.VK_DOWN:
-			newDirection = Direction.DOWN;
-			hero.move(newDirection);
-			newPosition = hero.getPosition().plus(newDirection.asVector());
-			attackEntity(hero, newPosition);
-			turns++;
-			break;
-		default:
-			break;
+		//Entity Movements
+		for(GameElement e : getLevel().getElementList() ){
+			switch (e.getName()) {
+			case "Skeleton":
+					Skeleton skeleton = (Skeleton)e;
+					if (!skeleton.getPosition().equals(hero.getPosition())) {
+						newDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
+						skeleton.move(newDirection);
+					}
+				break;
+			case "Bat":
+					Bat bat = (Bat)e;
+					if(!bat.getPosition().equals(hero.getPosition())) {
+						newDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
+						 bat.move(newDirection);
+					}
+				break;
+			default:
+				break;
+			}
 		}
-				
-		// Skeletons Movement
-		for(Skeleton skeleton : skeletonList) {
-			newDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
-			skeleton.move(newDirection);
-			newPosition = skeleton.getPosition().plus(newDirection.asVector());
-			attackEntity(skeleton, newPosition);
-		}
-		
-		// Bats Movement
-		for(Bat bat : batList) {
-			newDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
-			bat.move(newDirection);
-			newPosition = bat.getPosition().plus(newDirection.asVector());
-			attackEntity(bat, newPosition);
-		}
-		
-		
-//		Thug movement still needs implementing
-//		for (Thug t : thugList) {
-//			
-//		}
-		
 		
 		// Updates Status Message
 		gui.setStatusMessage("Turns" + turns);
@@ -272,29 +122,62 @@ public class Engine implements Observer {
 		gui.update();
 	}
 	
-	private void removeFromLists(Entity e) {
-		skeletonList.remove(e);
-		batList.remove(e);
-		thugList.remove(e);
-		elementList.remove(e);
-		entityList.remove(e);
+	private void moveHero(int keyPressed) {
+		Direction newDirection;
+		switch (keyPressed) {
+		case KeyEvent.VK_UP:
+			newDirection = Direction.UP;
+			hero.move(newDirection);
+//			attackEntity(hero, newPosition);
+			turns++;
+			break;
+		case KeyEvent.VK_LEFT:
+			newDirection = Direction.LEFT;
+			hero.move(newDirection);
+//			attackEntity(hero, newPosition);
+			turns++;
+			break;
+		case KeyEvent.VK_RIGHT:
+			newDirection = Direction.RIGHT;
+			hero.move(newDirection);
+//			attackEntity(hero, newPosition);
+			turns++;
+			break;
+		case KeyEvent.VK_DOWN:
+			newDirection = Direction.DOWN;
+			hero.move(newDirection);
+//			attackEntity(hero, newPosition);
+			turns++;
+			break;
+		default:
+			break;
+		}
 	}
 	
-	//Removes all gameElements and cleans all Lists. (A bit messy)
-//	private void removeObjects() {
-//		for (GameElement e : elementList)
-//			gui.removeImage(e);
-//		
-//		Iterator<GameElement> it = elementList.iterator();
-//		while(it.hasNext()) {it.remove();}
-//		Iterator<Entity> it1 = entityList.iterator();
-//		while(it1.hasNext()) {it1.remove();}
-//		Iterator<Skeleton> it2 = skeletonList.iterator();
-//		while(it2.hasNext()) {it2.remove();}
-//		Iterator<Bat> it3 = batList.iterator();
-//		while(it3.hasNext()) {it3.remove();}
-//		Iterator<Thug> it4 = thugList.iterator();
-//		while(it4.hasNext()) {it4.remove();}
-//	}
-		
+	public static Level getLevel() {
+		return levelList.get(currentFloor);
+	}
+	
+	public static int getTurns() {
+		return turns;
+	}
+	
+	public static int getCurrentFloor() {
+		return currentFloor;
+	}
+	
+	private void attackEntity(Entity attacker, Point2D newPosition) {
+		Entity attacked = getLevel().getEntity(newPosition);
+		if (attacked != null) {
+			attacked.setHealth(attacked.getHealth() - attacker.getAttack());
+			System.out.println("Attacked health is: " + attacked.getHealth());
+			System.out.println(attacked.getName() + " health is: " + attacked.getHealth());
+			if ( attacked.getHealth() <= 0 ) {
+				gui.removeImage(attacked);
+				getLevel().removeFromLists(attacked);
+				gui.update();
+			}
+		}
+	}
+	
 	}

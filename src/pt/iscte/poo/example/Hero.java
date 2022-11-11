@@ -5,29 +5,28 @@ import pt.iscte.poo.utils.Point2D;
 
 public class Hero extends Entity{
 
+	private boolean hasSword;
+	private boolean hasArmor;
 
-	public Hero(String name, Point2D position, int health, int attack) {
-		super(name, position, health, attack);
+	public Hero(Point2D position) {
+		super("Hero", position, 10, 1);
+		hasSword = false;
+		hasArmor = false;
 	}
 	
-	public static boolean IsEnemy(Point2D position) {
-		for (Entity  e : Engine.getEntityList())
-			if (  e.getPosition().equals(position) && !(e.getName().equals("Hero") ) )
-				return true;
-	return false;
-	}
-//	private boolean IsEnemy(Point2D position) {
-//		for (Entity  e : Engine.getEntityList())
-//			if (  e.getPosition().equals(position) && !(e.getName().equals("Hero") ) )
-//				return true;
-//	return false;
-//	}
-	
-	public static Enemy getEnemy(Point2D position) {
-		for (Entity  e : Engine.getEntityList())
-			if ( e.getPosition().equals(position) && !(e.getName().equals("Hero")) )
-				return Enemy.createEnemyFromEntity(e);
-	return null;
+	public boolean getSword() {
+		return hasSword;
 	}
 	
+	public boolean getArmor() {
+		return hasArmor;
+	}
+	
+	public void setSword(boolean b) {
+		hasSword = b;
+	}
+	
+	public void setArmor(boolean b) {
+		hasArmor = b;
+	}
 }

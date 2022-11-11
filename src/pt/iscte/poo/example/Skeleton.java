@@ -6,20 +6,20 @@ import pt.iscte.poo.utils.Point2D;
 public class Skeleton extends Enemy{
 
 	// Skeleton Constructor
-	public Skeleton(String name, Point2D position) {
-		super(name, position, 5, 1);
+	public Skeleton(Point2D position) {
+		super("Skeleton", position, 5, 1);
 	}
 	
-	public static Skeleton createSkeletonFromEntity(Entity entity) {
-		return new Skeleton(entity.getName(), entity.getPosition());
-	}
+//	public static Skeleton createSkeletonFromEntity(Entity entity) {
+//		return new Skeleton(entity.getName(), entity.getPosition());
+//	}
 
 	@Override
 	public void move(Direction d) {
 		if ( Engine.getTurns() % 2 != 0 ) {
 			super.move(d);
 			}
-		}
+	}
 
 	}
 	

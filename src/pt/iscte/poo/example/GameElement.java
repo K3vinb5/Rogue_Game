@@ -38,10 +38,9 @@ public abstract class GameElement implements ImageTile{
 		this.name = name;
 	}
 	
-	
 	//temp
 	@Override
 	public String toString() {
-		return "Name: " + this.getName() + "X: " + this.getPosition().getX() + " Y: " + this.getPosition().getY();
+		return "Name: " + this.getName() + " X: " + this.getPosition().getX() + " Y: " + this.getPosition().getY();
 	}
 }
