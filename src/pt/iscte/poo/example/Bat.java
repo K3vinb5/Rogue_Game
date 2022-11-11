@@ -14,12 +14,12 @@ public class Bat extends Enemy{
 //	}
 	
 	@Override
-	public void move(Direction d) {
+	public boolean move(Direction d) {
 		if ((int)(Math.random() * 1000) == 1) { // 50/50 chance
-			super.move(d);
+			return super.move(d);
 		}else {
 			Direction randomDirection = Direction.random();
-			 super.move(randomDirection);
+			 return super.move(randomDirection);
 			}
 		}
 	}

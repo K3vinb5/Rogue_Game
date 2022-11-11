@@ -37,7 +37,7 @@ public abstract class Entity extends GameElement {
 	}
 	
 	// Entity related methods
-	public void move(Direction d) {
+	public boolean move(Direction d) {
 
 		Point2D newPosition = this.getPosition().plus(d.asVector());
 		boolean withinBounds = (newPosition.getX() < Engine.GRID_WIDTH && newPosition.getY() < Engine.GRID_HEIGHT && newPosition.getX() >= 0 && newPosition.getY() >= 0);
@@ -45,7 +45,9 @@ public abstract class Entity extends GameElement {
 		//Checks if new position is valid
 		if  (withinBounds && Engine.getLevel().isValid(newPosition) ){
 			this.setPosition(newPosition);
+			return true;
 		}
+		return false;
 	}
 
 	// Because all entities layers are 1:

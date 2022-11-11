@@ -31,6 +31,10 @@ public class Level {
 		elementList.add(hero);
 	}
 	
+	public Hero getHero() {
+		return hero;
+	}
+	
 	public void removeFromLists(Entity e) {
 		Iterator<GameElement> itG = elementList.iterator();
 		while (itG.hasNext()) {

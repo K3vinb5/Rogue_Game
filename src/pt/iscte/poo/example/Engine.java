@@ -69,7 +69,8 @@ public class Engine implements Observer {
 		List<ImageTile>  tileList = new ArrayList<>();
 		for (int x = 0; x!= GRID_WIDTH; x++)
 			for (int y = GRID_HEIGHT; y != GRID_HEIGHT + GRID_HEALTH; y++)
-				tileList.add( new HealthBar(new Point2D(x, y)) );
+				if (x< GRID_WIDTH-4)
+						tileList.add( new HealthBar(new Point2D(x, y)) );
 		gui.addImages(tileList);
 	}
 	
@@ -78,10 +79,8 @@ public class Engine implements Observer {
 		gui.addImage(hero);
 		getLevel().setHero(hero);
 		// Other Objects
-		for (GameElement g : getLevel().getElementList()) {
-			System.out.println(g.getName());
+		for (GameElement g : getLevel().getElementList()) 
 			gui.addImage(g);
-		}
 	}
 	
 	@Override
@@ -90,8 +89,8 @@ public class Engine implements Observer {
 		// Hero Movement
 		int keyPressed = ((ImageMatrixGUI) source).keyPressed();
 		moveHero(keyPressed);
-		Direction newDirection;		
-		System.out.println(hero.getName() + hero.getPosition());
+		Direction newDirection;
+		Point2D newPosition;
 		
 		//Entity Movements
 		for(GameElement e : getLevel().getElementList() ){
@@ -100,14 +99,18 @@ public class Engine implements Observer {
 					Skeleton skeleton = (Skeleton)e;
 					if (!skeleton.getPosition().equals(hero.getPosition())) {
 						newDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
-						skeleton.move(newDirection);
+						newPosition = skeleton.getPosition().plus(newDirection.asVector());
+						if ( skeleton.move(newDirection))
+							attackEntity(skeleton, newPosition);
 					}
 				break;
 			case "Bat":
 					Bat bat = (Bat)e;
 					if(!bat.getPosition().equals(hero.getPosition())) {
 						newDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
-						 bat.move(newDirection);
+						newPosition = bat.getPosition().plus(newDirection.asVector());
+						if ( bat.move(newDirection))
+							attackEntity(bat, newPosition);
 					}
 				break;
 			default:
@@ -124,29 +127,34 @@ public class Engine implements Observer {
 	
 	private void moveHero(int keyPressed) {
 		Direction newDirection;
+		Point2D newPosition;
 		switch (keyPressed) {
 		case KeyEvent.VK_UP:
 			newDirection = Direction.UP;
-			hero.move(newDirection);
-//			attackEntity(hero, newPosition);
+			newPosition = hero.getPosition().plus(newDirection.asVector());
+			if ( hero.move(newDirection) )
+				attackEntity(hero, newPosition);
 			turns++;
 			break;
 		case KeyEvent.VK_LEFT:
 			newDirection = Direction.LEFT;
-			hero.move(newDirection);
-//			attackEntity(hero, newPosition);
+			newPosition = hero.getPosition().plus(newDirection.asVector());
+			if (hero.move(newDirection))
+				attackEntity(hero, newPosition);
 			turns++;
 			break;
 		case KeyEvent.VK_RIGHT:
 			newDirection = Direction.RIGHT;
-			hero.move(newDirection);
-//			attackEntity(hero, newPosition);
+			newPosition = hero.getPosition().plus(newDirection.asVector());
+			if ( hero.move(newDirection) )
+				attackEntity(hero, newPosition);
 			turns++;
 			break;
 		case KeyEvent.VK_DOWN:
 			newDirection = Direction.DOWN;
-			hero.move(newDirection);
-//			attackEntity(hero, newPosition);
+			newPosition = hero.getPosition().plus(newDirection.asVector());
+			if ( hero.move(newDirection))
+				attackEntity(hero, newPosition);
 			turns++;
 			break;
 		default:
@@ -170,7 +178,6 @@ public class Engine implements Observer {
 		Entity attacked = getLevel().getEntity(newPosition);
 		if (attacked != null) {
 			attacked.setHealth(attacked.getHealth() - attacker.getAttack());
-			System.out.println("Attacked health is: " + attacked.getHealth());
 			System.out.println(attacked.getName() + " health is: " + attacked.getHealth());
 			if ( attacked.getHealth() <= 0 ) {
 				gui.removeImage(attacked);

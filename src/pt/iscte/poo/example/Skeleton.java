@@ -15,10 +15,11 @@ public class Skeleton extends Enemy{
 //	}
 
 	@Override
-	public void move(Direction d) {
+	public boolean move(Direction d) {
 		if ( Engine.getTurns() % 2 != 0 ) {
-			super.move(d);
+			 return super.move(d);
 			}
+		return false;
 	}
 
 	}
