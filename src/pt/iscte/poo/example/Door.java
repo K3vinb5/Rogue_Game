@@ -11,7 +11,7 @@ public class Door extends GameElement implements Transposible{
 	
 	//Constructor 1
 	public Door( Point2D position, String room, Point2D newPosition, String keyID) {
-		super("Door", position, 3);
+		super("DoorClosed", position, 1);
 		this.keyID = keyID;
 		this.newPostion = newPosition;
 		this.room=Integer.parseInt(room.split("room")[1]);
@@ -20,7 +20,7 @@ public class Door extends GameElement implements Transposible{
 	
 	//Constructor 2
 	public Door(Point2D position, String room, Point2D newPosition) {
-		super("Door", position, 3);
+		super("DoorOpen", position, 1);
 		this.newPostion = newPosition;
 		this.room = Integer.parseInt(room.split("room")[1]);
 		this.isLocked = false;
@@ -39,6 +39,6 @@ public class Door extends GameElement implements Transposible{
 
 	@Override
 	public int getLayer() {
-		return 3;
+		return 1;
 	}
 }

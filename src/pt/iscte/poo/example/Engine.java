@@ -109,6 +109,15 @@ public class Engine implements Observer {
 							attackEntity(bat, getLevel().getEntity(newPosition));
 					}
 				break;
+			case "Thug":
+				Thug thug= (Thug)e;
+				if (!thug.getPosition().equals(hero.getPosition())) {
+					newDirection = Direction.forVector(Vector2D.movementVector(thug.getPosition(), hero.getPosition()));
+					newPosition = thug.getPosition().plus(newDirection.asVector());
+					if ( thug.move(newDirection))
+						attackEntity(thug, getLevel().getEntity(newPosition));
+				}
+				break;
 			default:
 				break;
 			}
@@ -122,35 +131,44 @@ public class Engine implements Observer {
 	}
 	
 	private void moveHero(int keyPressed) {
+		
 		Direction newDirection;
 		Point2D newPosition;
 		switch (keyPressed) {
 		case KeyEvent.VK_UP:
 			newDirection = Direction.UP;
 			newPosition = hero.getPosition().plus(newDirection.asVector());
-			if ( hero.move(newDirection) )
+			if ( hero.move(newDirection) ) {
 				attackEntity(hero, getLevel().getEntity(newPosition));
+				interact();
+			}
 			turns++;
 			break;
 		case KeyEvent.VK_LEFT:
 			newDirection = Direction.LEFT;
 			newPosition = hero.getPosition().plus(newDirection.asVector());
-			if (hero.move(newDirection))
+			if (hero.move(newDirection)) {
 				attackEntity(hero, getLevel().getEntity(newPosition));
+				interact();
+			}
 			turns++;
 			break;
 		case KeyEvent.VK_RIGHT:
 			newDirection = Direction.RIGHT;
 			newPosition = hero.getPosition().plus(newDirection.asVector());
-			if ( hero.move(newDirection) )
+			if ( hero.move(newDirection) ) {
 				attackEntity(hero, getLevel().getEntity(newPosition));
+				interact();
+			}
 			turns++;
 			break;
 		case KeyEvent.VK_DOWN:
 			newDirection = Direction.DOWN;
 			newPosition = hero.getPosition().plus(newDirection.asVector());
-			if ( hero.move(newDirection))
+			if ( hero.move(newDirection)) {
 				attackEntity(hero, getLevel().getEntity(newPosition));
+				interact();
+			}
 			turns++;
 			break;
 		default:
@@ -182,4 +200,35 @@ public class Engine implements Observer {
 		}
 	}
 	
+	private void interact() {
+		GameElement item = getLevel().getItem(hero.getPosition());
+		if (item  != null) {
+			switch (item.getName()) {
+			case "Sword":
+				Sword sword = (Sword)item;
+				
+				break;
+			case "Armor":
+				Armor armor = (Armor)item;
+				
+				break;
+			case "Key":
+				Key key = (Key)item;
+				
+				break;			
+			case "Door":
+				Door door = (Door)item;
+				
+				break;		
+			case "HealingPotion":
+				HealingPotion healingPotion = (HealingPotion)item;
+				
+				break;				
+			default:
+				break;
+			}
+		}
+	
 	}
+	
+}

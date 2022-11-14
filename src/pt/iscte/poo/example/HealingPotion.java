@@ -5,7 +5,7 @@ import pt.iscte.poo.utils.Point2D;
 public class HealingPotion extends GameElement implements Transposible{
 
 	public HealingPotion(Point2D position) {
-		super("HealingPotion", position, 2);
+		super("HealingPotion", position, 1);
 	}
 
 }

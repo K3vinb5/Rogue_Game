@@ -14,7 +14,7 @@ public abstract class Entity extends GameElement {
 	
 	// Entity Constructor
 	public Entity(String name, Point2D position, int health, int attack) {
-		super(name, position, 1);
+		super(name, position, 2);
 		this.health = health;
 		this.attack = attack;
 	}
@@ -56,7 +56,7 @@ public abstract class Entity extends GameElement {
 	// Because all entities layers are 1:
 	@Override
 	public int getLayer() {
-		return 0;
+		return 2;
 	}
 		
 }

@@ -15,7 +15,7 @@ public class Bat extends Enemy{
 	
 	@Override
 	public boolean move(Direction d) {
-		if ((int)(Math.random() * 1000) == 1) { // 50/50 chance
+		if ((int)(Math.random() * 2) < 1) { // 50/50 chance
 			return super.move(d);
 		}else {
 			Direction randomDirection = Direction.random();

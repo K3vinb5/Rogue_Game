@@ -48,7 +48,7 @@ public class Level {
 	public boolean isValid(Point2D newPosition) {
 		for (GameElement g : elementList) 
 			if (newPosition.equals(g.getPosition())) {
-				
+				//Entities
 				if(g instanceof Entity) {
 					Entity e = (Entity)g;
 					if (e.getHealth() > 0) {
@@ -57,7 +57,10 @@ public class Level {
 						return true;
 					}
 				}
-				
+				//Items
+				if (g instanceof Transposible) {
+					return true;
+				}
 				return false;
 			}
 		return true;
@@ -70,6 +73,15 @@ public class Level {
 				if(e.getHealth() > 0)
 					return e;
 			}
+		return null;
+	}
+	
+	public GameElement getItem(Point2D position) {
+		for (GameElement g : elementList) {
+			if (g.getPosition().equals(position) && g instanceof Transposible) {
+				return g;
+			}
+		}
 		return null;
 	}
 	

@@ -7,7 +7,7 @@ public class Key extends GameElement implements Transposible{
 	private String keyId;
 	
 	public Key( Point2D position, String keyId) {
-		super("Key", position, 2);
+		super("Key", position, 1);
 		this.setKeyId(keyId);
 	}
 
