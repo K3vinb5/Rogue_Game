@@ -2,7 +2,7 @@ package pt.iscte.poo.example;
 
 import pt.iscte.poo.utils.Point2D;
 
-public class Key extends GameElement{
+public class Key extends GameElement implements Transposible{
 
 	private String keyId;
 	

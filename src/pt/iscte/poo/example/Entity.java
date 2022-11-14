@@ -43,11 +43,14 @@ public abstract class Entity extends GameElement {
 		boolean withinBounds = (newPosition.getX() < Engine.GRID_WIDTH && newPosition.getY() < Engine.GRID_HEIGHT && newPosition.getX() >= 0 && newPosition.getY() >= 0);
 		
 		//Checks if new position is valid
-		if  (withinBounds && Engine.getLevel().isValid(newPosition) ){
+		if  (withinBounds && Engine.getLevel().isValid(newPosition)){
 			this.setPosition(newPosition);
 			return true;
+		}else if (Engine.getLevel().getEntity(newPosition) instanceof Entity) {
+			return true;
+		}else {
+			return false;
 		}
-		return false;
 	}
 
 	// Because all entities layers are 1:

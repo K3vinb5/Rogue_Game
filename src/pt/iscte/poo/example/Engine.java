@@ -1,7 +1,6 @@
 package pt.iscte.poo.example;
 
 import java.util.ArrayList;
-//import java.util.Iterator;
 import java.util.List;
 import pt.iscte.poo.gui.ImageMatrixGUI;
 import pt.iscte.poo.gui.ImageTile;
@@ -26,8 +25,6 @@ public class Engine implements Observer {
 	private Hero hero;
 	private static List<Level> levelList = new ArrayList<>();
 	private static int currentFloor;
-	
-	//Other attributes (Used for storing information)
 	private static int turns;
 	
 	// - - Methods --
@@ -46,12 +43,11 @@ public class Engine implements Observer {
 
 	public void start() {
 		// temporary
-		hero = new Hero(new Point2D(4,4));
 		currentFloor = 0;
 		for (int i = 0; i < 4; i++)
 			levelList.add(new Level("rooms//room" + currentFloor + ".txt"));
 				addFloor();
-		addObjects(hero);
+		addObjects(new Hero(new Point2D(4,4)));
 		addHealthBar();
 		gui.setStatusMessage("Turns:" + turns);
 		gui.update();
@@ -76,8 +72,8 @@ public class Engine implements Observer {
 	
 	//Hero's position missing
 	private void addObjects(Hero hero) {
-		gui.addImage(hero);
 		getLevel().setHero(hero);
+		this.hero = getLevel().getHero();
 		// Other Objects
 		for (GameElement g : getLevel().getElementList()) 
 			gui.addImage(g);
@@ -101,7 +97,7 @@ public class Engine implements Observer {
 						newDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
 						newPosition = skeleton.getPosition().plus(newDirection.asVector());
 						if ( skeleton.move(newDirection))
-							attackEntity(skeleton, newPosition);
+							attackEntity(skeleton, getLevel().getEntity(newPosition));
 					}
 				break;
 			case "Bat":
@@ -110,7 +106,7 @@ public class Engine implements Observer {
 						newDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
 						newPosition = bat.getPosition().plus(newDirection.asVector());
 						if ( bat.move(newDirection))
-							attackEntity(bat, newPosition);
+							attackEntity(bat, getLevel().getEntity(newPosition));
 					}
 				break;
 			default:
@@ -133,28 +129,28 @@ public class Engine implements Observer {
 			newDirection = Direction.UP;
 			newPosition = hero.getPosition().plus(newDirection.asVector());
 			if ( hero.move(newDirection) )
-				attackEntity(hero, newPosition);
+				attackEntity(hero, getLevel().getEntity(newPosition));
 			turns++;
 			break;
 		case KeyEvent.VK_LEFT:
 			newDirection = Direction.LEFT;
 			newPosition = hero.getPosition().plus(newDirection.asVector());
 			if (hero.move(newDirection))
-				attackEntity(hero, newPosition);
+				attackEntity(hero, getLevel().getEntity(newPosition));
 			turns++;
 			break;
 		case KeyEvent.VK_RIGHT:
 			newDirection = Direction.RIGHT;
 			newPosition = hero.getPosition().plus(newDirection.asVector());
 			if ( hero.move(newDirection) )
-				attackEntity(hero, newPosition);
+				attackEntity(hero, getLevel().getEntity(newPosition));
 			turns++;
 			break;
 		case KeyEvent.VK_DOWN:
 			newDirection = Direction.DOWN;
 			newPosition = hero.getPosition().plus(newDirection.asVector());
 			if ( hero.move(newDirection))
-				attackEntity(hero, newPosition);
+				attackEntity(hero, getLevel().getEntity(newPosition));
 			turns++;
 			break;
 		default:
@@ -174,14 +170,13 @@ public class Engine implements Observer {
 		return currentFloor;
 	}
 	
-	private void attackEntity(Entity attacker, Point2D newPosition) {
-		Entity attacked = getLevel().getEntity(newPosition);
-		if (attacked != null) {
+	private void attackEntity(Entity attacker, Entity attacked) {
+		if (attacked != null && !attacked.equals(attacker) && !(attacker instanceof Enemy && attacked instanceof Enemy) && attacker.getHealth() > 0) {
+			System.out.println(attacked.getName() + " was attacked by " + attacker.getName());
 			attacked.setHealth(attacked.getHealth() - attacker.getAttack());
-			System.out.println(attacked.getName() + " health is: " + attacked.getHealth());
 			if ( attacked.getHealth() <= 0 ) {
 				gui.removeImage(attacked);
-				getLevel().removeFromLists(attacked);
+				System.out.println(attacked.getName() + " will be removed");
 				gui.update();
 			}
 		}

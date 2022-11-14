@@ -3,7 +3,7 @@ package pt.iscte.poo.example;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Iterator;
+//import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -35,30 +35,41 @@ public class Level {
 		return hero;
 	}
 	
-	public void removeFromLists(Entity e) {
-		Iterator<GameElement> itG = elementList.iterator();
-		while (itG.hasNext()) {
-			if (itG.next().equals(e)) {
-				itG.remove();
-			}
-		}
+	public void removeFromLists(GameElement g) {
+		//Iterator<GameElement> itG = elementList.iterator();
+		elementList.remove(g);
 	}
 	
 	public String getName() {
 		return name;
 	}
 	
+	
 	public boolean isValid(Point2D newPosition) {
 		for (GameElement g : elementList) 
-			if (newPosition.equals(g.getPosition())) 
+			if (newPosition.equals(g.getPosition())) {
+				
+				if(g instanceof Entity) {
+					Entity e = (Entity)g;
+					if (e.getHealth() > 0) {
+						return false;
+					}else {
+						return true;
+					}
+				}
+				
 				return false;
+			}
 		return true;
 	}
 	
 	public Entity getEntity(Point2D position) {
 		for (GameElement g : elementList) 
-			if (g.getPosition().equals(position) && (g instanceof Entity))
-				return (Entity)g;
+			if (g.getPosition().equals(position) && (g instanceof Entity)) {
+				Entity e = (Entity)g;
+				if(e.getHealth() > 0)
+					return e;
+			}
 		return null;
 	}
 	
@@ -173,6 +184,15 @@ public class Level {
 				break;
 				case "Key":
 					returnEntityList.add(new Key(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2])), attributes[3]));
+				break;
+				case "Door":
+					if ( attributes.length == 6 ) {
+						//We'll use Constructor 2
+						returnEntityList.add(new Door(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2])), attributes[3], new Point2D(Integer.parseInt(attributes[4]), Integer.parseInt(attributes[5])) ));
+					}else if (attributes.length == 7) {
+						//We'll use constructor 1
+						returnEntityList.add(new Door(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2])), attributes[3], new Point2D(Integer.parseInt(attributes[4]), Integer.parseInt(attributes[5])), attributes[6] ));
+					}
 				break;
 				default:
 					break;
