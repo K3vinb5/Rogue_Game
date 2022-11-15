@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
 
 public class Level {
@@ -81,6 +82,19 @@ public class Level {
 			if (g.getPosition().equals(position) && g instanceof Transposible) {
 				return g;
 			}
+		}
+		return null;
+	}
+	
+	public Point2D getValidNeighboringPosition(Point2D position) {
+		if (isValid(position.plus(Direction.UP.asVector()))){
+			return position.plus(Direction.UP.asVector());
+		} else if (isValid(position.plus(Direction.LEFT.asVector()))){
+			return position.plus(Direction.LEFT.asVector());
+		} else if (isValid(position.plus(Direction.DOWN.asVector()))){
+			return position.plus(Direction.DOWN.asVector());
+		}else if (isValid(position.plus(Direction.RIGHT.asVector()))){
+			return position.plus(Direction.RIGHT.asVector());
 		}
 		return null;
 	}

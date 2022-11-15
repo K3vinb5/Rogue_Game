@@ -10,10 +10,10 @@ public abstract class Entity extends GameElement {
 	
 	// Entities exclusive attributes
 	public double health;
-	public int attack;
+	public double attack;
 	
 	// Entity Constructor
-	public Entity(String name, Point2D position, double health, int attack) {
+	public Entity(String name, Point2D position, double health, double attack) {
 		super(name, position, 2);
 		this.health = health;
 		this.attack = attack;
@@ -24,9 +24,10 @@ public abstract class Entity extends GameElement {
 		return health;
 	}
 	
-	public int getAttack() {
+	public double getAttack() {
 		return attack;
 	}
+	
 	// Setters
 	public void setHealth(double health) {
 		this.health = health;

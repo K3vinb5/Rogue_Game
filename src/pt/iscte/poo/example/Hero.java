@@ -29,4 +29,13 @@ public class Hero extends Entity{
 	public void setArmor(boolean b) {
 		hasArmor = b;
 	}
+	
+	@Override
+	public double getAttack() {
+		if (this.getSword()) {
+			return super.getAttack()*2;
+		}else {
+			return super.getAttack();
+		}
+	}
 }

@@ -23,6 +23,7 @@ public class Engine implements Observer {
 	
 	// Other Attributes
 	private Hero hero;
+	private Status status = new Status();
 	private static List<Level> levelList = new ArrayList<>();
 	private static int currentFloor;
 	private static int turns;
@@ -48,7 +49,7 @@ public class Engine implements Observer {
 			levelList.add(new Level("rooms//room" + (currentFloor + i) + ".txt"));
 		addFloor();
 		addObjects(new Hero(new Point2D(4,4)));
-		addHealthBar();
+		addStatus();
 		gui.setStatusMessage("Turns:" + turns);
 		gui.update();
 	}
@@ -61,13 +62,10 @@ public class Engine implements Observer {
 		gui.addImages(tileList);
 	}
 	
-	private void addHealthBar() {
-		List<ImageTile>  tileList = new ArrayList<>();
-		for (int x = 0; x!= GRID_WIDTH; x++)
-			for (int y = GRID_HEIGHT; y != GRID_HEIGHT + GRID_HEALTH; y++)
-				if (x< GRID_WIDTH-4)
-						tileList.add( new HealthBar(new Point2D(x, y)) );
-		gui.addImages(tileList);
+	private void addStatus() {
+		for (GameElement g : status.getStatusElements()) {
+			gui.addImage(g);
+		}
 	}
 	
 	//Hero's position missing
@@ -92,6 +90,7 @@ public class Engine implements Observer {
 		// Hero Movement
 		int keyPressed = ((ImageMatrixGUI) source).keyPressed();
 		moveHero(keyPressed);
+		updateStatus(keyPressed);
 		test(keyPressed);
 		Direction newDirection;
 		Point2D newPosition;
@@ -101,30 +100,15 @@ public class Engine implements Observer {
 			switch (e.getName()) {
 			case "Skeleton":
 					Skeleton skeleton = (Skeleton)e;
-					if (!skeleton.getPosition().equals(hero.getPosition())) {
-						newDirection = Direction.forVector(Vector2D.movementVector(skeleton.getPosition(), hero.getPosition()));
-						newPosition = skeleton.getPosition().plus(newDirection.asVector());
-						if ( skeleton.move(newDirection))
-							attackEntity(skeleton, getLevel().getEntity(newPosition));
-					}
+					moveEnemy(skeleton);
 				break;
 			case "Bat":
 					Bat bat = (Bat)e;
-					if(!bat.getPosition().equals(hero.getPosition())) {
-						newDirection = Direction.forVector(Vector2D.movementVector(bat.getPosition(), hero.getPosition()));
-						newPosition = bat.getPosition().plus(newDirection.asVector());
-						if ( bat.move(newDirection))
-							attackEntity(bat, getLevel().getEntity(newPosition));
-					}
+					moveEnemy(bat);
 				break;
 			case "Thug":
-				Thug thug= (Thug)e;
-				if (!thug.getPosition().equals(hero.getPosition())) {
-					newDirection = Direction.forVector(Vector2D.movementVector(thug.getPosition(), hero.getPosition()));
-					newPosition = thug.getPosition().plus(newDirection.asVector());
-					if ( thug.move(newDirection))
-						attackEntity(thug, getLevel().getEntity(newPosition));
-				}
+				Thug thug = (Thug)e;
+				moveEnemy(thug);
 				break;
 			default:
 				break;
@@ -136,6 +120,17 @@ public class Engine implements Observer {
 		
 		// Updates Graphical User Interface
 		gui.update();
+	}
+	
+	private void moveEnemy(Entity e) {
+		Direction newDirection;
+		Point2D newPosition;
+		if (!e.getPosition().equals(hero.getPosition())) {
+			newDirection = Direction.forVector(Vector2D.movementVector(e.getPosition(), hero.getPosition()));
+			newPosition = e.getPosition().plus(newDirection.asVector());
+			if ( e.move(newDirection))
+				attackEntity(e, getLevel().getEntity(newPosition));
+		}
 	}
 	
 	private void moveHero(int keyPressed) {
@@ -184,6 +179,22 @@ public class Engine implements Observer {
 		}
 	}
 	
+	private void updateStatus(int keyPressed) {
+		switch (keyPressed) {
+		case KeyEvent.VK_NUMPAD1:
+				dropItem(0);
+			break;
+		case KeyEvent.VK_NUMPAD2:
+				dropItem(1);
+			break;
+		case KeyEvent.VK_NUMPAD3:
+				dropItem(2);
+			break;
+		default:
+			break;
+		}
+	}
+	
 	public static Level getLevel() {
 		return levelList.get(currentFloor);
 	}
@@ -214,15 +225,15 @@ public class Engine implements Observer {
 			switch (item.getName()) {
 			case "Sword":
 				Sword sword = (Sword)item;
-				
+				pickupItem(sword);
 				break;
 			case "Armor":
 				Armor armor = (Armor)item;
-				
+				pickupItem(armor);
 				break;
 			case "Key":
 				Key key = (Key)item;
-				
+				pickupItem(key);
 				break;			
 			case "DoorClosed":
 				//Need to change so it doesn't behave like an open door
@@ -235,7 +246,7 @@ public class Engine implements Observer {
 				break;	
 			case "HealingPotion":
 				HealingPotion healingPotion = (HealingPotion)item;
-				
+				pickupItem(healingPotion);
 				break;				
 			default:
 				break;
@@ -243,15 +254,68 @@ public class Engine implements Observer {
 		}
 	}
 	
+	private void pickupItem(GameElement item) {
+		if (!status.isFull()) {
+			//Remove Item from Level ElementList
+			getLevel().getElementList().remove(item);
+			gui.removeImage(item);
+			//Add Item from Status ElementList
+			gui.addImage(status.getItem(status.setItem(item)));
+			gui.update();
+			switch (item.getName()) {
+			case "Sword":
+					hero.setSword(true);
+				break;
+			case "Armor":
+					hero.setArmor(true);
+				break;
+			default:
+				break;
+			} 
+		}
+	}
+	
+	private void dropItem(int slotNumber) {
+		if (status.isOccupied(slotNumber)) {
+			GameElement item = status.getItem(slotNumber);
+			getLevel().getElementList().add(item);
+			status.removeItem(slotNumber, item);
+			gui.removeImage(item);
+			item.setPosition(getLevel().getValidNeighboringPosition(hero.getPosition()));
+			gui.addImage(item);
+			gui.update();
+			
+			switch (item.getName()) {
+			case "Sword":
+					hero.setSword(false);
+				break;
+			case "Armor":
+					hero.setArmor(false);
+				break;
+			default:
+				break;
+			} 
+		}
+	}
+	
 	private void removeSprites() {
+		//Level Elements
 		for (GameElement g : getLevel().getElementList())
 			gui.removeImage(g);
+		
+		//Status Elements
+		for (GameElement g : status.getStatusElements()){
+			gui.removeImage(g);
+		}
 	}
 	
 	private void loadLevel(int newLevel, Point2D newPosition) {
+		//Removes all Images (Except floors)
 		removeSprites();
 		currentFloor = newLevel;
 		getLevel().setHero(this.hero);
+		
+		//Level Elements
 		for (GameElement g : getLevel().getElementList()) {
 			if ( g instanceof Entity) {
 				Entity e = (Entity)g;
@@ -262,27 +326,38 @@ public class Engine implements Observer {
 				gui.addImage(g);
 			}
 		}
+		
+		//Status Elements
+		for (GameElement g : status.getStatusElements()) {
+			gui.addImage(g);
+		}
+		
 		hero.setPosition(newPosition);
 		gui.update();
 	}
 	
+	//Temporary
 	private void test(int keyPressed) {
 		switch (keyPressed) {
-		case KeyEvent.VK_NUMPAD0:
+		case KeyEvent.VK_NUMPAD7:
 				loadLevel(0, hero.getPosition());
 			break;
-		case KeyEvent.VK_NUMPAD1:
+		case KeyEvent.VK_NUMPAD8:
 				loadLevel(1, hero.getPosition());
 			break;
-		case KeyEvent.VK_NUMPAD2:
-			loadLevel(2, hero.getPosition());
+		case KeyEvent.VK_NUMPAD9:
+				loadLevel(2, hero.getPosition());
 			break;
-		case KeyEvent.VK_NUMPAD3:
-			loadLevel(3, hero.getPosition());
+		case KeyEvent.VK_NUMPAD4:
+				loadLevel(3, hero.getPosition());
+			break;
+		case KeyEvent.VK_NUMPAD5:
+				removeSprites();
 			break;
 		default:
 			break;
 		}
 	}
+
 	
 }
