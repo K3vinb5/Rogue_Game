@@ -225,6 +225,7 @@ public class Engine implements Observer {
 				
 				break;			
 			case "DoorClosed":
+				//Need to change so it doesn't behave like an open door
 				Door doorClosed = (Door)item;
 				loadLevel(doorClosed.getRoom(), doorClosed.getNewPostion());
 				break;

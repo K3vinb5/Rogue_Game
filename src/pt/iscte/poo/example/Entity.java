@@ -9,18 +9,18 @@ import pt.iscte.poo.utils.Point2D;
 public abstract class Entity extends GameElement {
 	
 	// Entities exclusive attributes
-	public int health;
+	public double health;
 	public int attack;
 	
 	// Entity Constructor
-	public Entity(String name, Point2D position, int health, int attack) {
+	public Entity(String name, Point2D position, double health, int attack) {
 		super(name, position, 2);
 		this.health = health;
 		this.attack = attack;
 	}
 
 	// Getters
-	public int getHealth() {
+	public double getHealth() {
 		return health;
 	}
 	
@@ -28,7 +28,7 @@ public abstract class Entity extends GameElement {
 		return attack;
 	}
 	// Setters
-	public void setHealth(int health) {
+	public void setHealth(double health) {
 		this.health = health;
 	}
 	
