@@ -9,7 +9,7 @@ public class Hero extends Entity{
 	private boolean hasArmor;
 
 	public Hero(Point2D position) {
-		super("Hero", position, 10, 1);
+		super("Hero", position, 1000, 1);
 		hasSword = false;
 		hasArmor = false;
 	}

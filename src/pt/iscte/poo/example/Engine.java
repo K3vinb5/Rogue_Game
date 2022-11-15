@@ -45,8 +45,8 @@ public class Engine implements Observer {
 		// temporary
 		currentFloor = 0;
 		for (int i = 0; i < 4; i++)
-			levelList.add(new Level("rooms//room" + currentFloor + ".txt"));
-				addFloor();
+			levelList.add(new Level("rooms//room" + (currentFloor + i) + ".txt"));
+		addFloor();
 		addObjects(new Hero(new Point2D(4,4)));
 		addHealthBar();
 		gui.setStatusMessage("Turns:" + turns);
@@ -74,9 +74,16 @@ public class Engine implements Observer {
 	private void addObjects(Hero hero) {
 		getLevel().setHero(hero);
 		this.hero = getLevel().getHero();
-		// Other Objects
-		for (GameElement g : getLevel().getElementList()) 
-			gui.addImage(g);
+		for (GameElement g : getLevel().getElementList()) {
+			if ( g instanceof Entity) {
+				Entity e = (Entity)g;
+				if (e.getHealth() > 0) {
+					gui.addImage(g);
+				}
+			}else {
+				gui.addImage(g);
+			}
+		}
 	}
 	
 	@Override
@@ -85,6 +92,7 @@ public class Engine implements Observer {
 		// Hero Movement
 		int keyPressed = ((ImageMatrixGUI) source).keyPressed();
 		moveHero(keyPressed);
+		test(keyPressed);
 		Direction newDirection;
 		Point2D newPosition;
 		
@@ -190,7 +198,7 @@ public class Engine implements Observer {
 	
 	private void attackEntity(Entity attacker, Entity attacked) {
 		if (attacked != null && !attacked.equals(attacker) && !(attacker instanceof Enemy && attacked instanceof Enemy) && attacker.getHealth() > 0) {
-			System.out.println(attacked.getName() + " was attacked by " + attacker.getName());
+			//System.out.println(attacked.getName() + " was attacked by " + attacker.getName());
 			attacked.setHealth(attacked.getHealth() - attacker.getAttack());
 			if ( attacked.getHealth() <= 0 ) {
 				gui.removeImage(attacked);
@@ -216,10 +224,14 @@ public class Engine implements Observer {
 				Key key = (Key)item;
 				
 				break;			
-			case "Door":
-				Door door = (Door)item;
-				
-				break;		
+			case "DoorClosed":
+				Door doorClosed = (Door)item;
+				loadLevel(doorClosed.getRoom(), doorClosed.getNewPostion());
+				break;
+			case "DoorOpen":
+				Door doorOpen = (Door)item;
+				loadLevel(doorOpen.getRoom(), doorOpen.getNewPostion());
+				break;	
 			case "HealingPotion":
 				HealingPotion healingPotion = (HealingPotion)item;
 				
@@ -228,7 +240,48 @@ public class Engine implements Observer {
 				break;
 			}
 		}
+	}
 	
+	private void removeSprites() {
+		for (GameElement g : getLevel().getElementList())
+			gui.removeImage(g);
+	}
+	
+	private void loadLevel(int newLevel, Point2D newPosition) {
+		removeSprites();
+		currentFloor = newLevel;
+		getLevel().setHero(this.hero);
+		for (GameElement g : getLevel().getElementList()) {
+			if ( g instanceof Entity) {
+				Entity e = (Entity)g;
+				if (e.getHealth() > 0) {
+					gui.addImage(g);
+				}
+			}else {
+				gui.addImage(g);
+			}
+		}
+		hero.setPosition(newPosition);
+		gui.update();
+	}
+	
+	private void test(int keyPressed) {
+		switch (keyPressed) {
+		case KeyEvent.VK_NUMPAD0:
+				loadLevel(0, hero.getPosition());
+			break;
+		case KeyEvent.VK_NUMPAD1:
+				loadLevel(1, hero.getPosition());
+			break;
+		case KeyEvent.VK_NUMPAD2:
+			loadLevel(2, hero.getPosition());
+			break;
+		case KeyEvent.VK_NUMPAD3:
+			loadLevel(3, hero.getPosition());
+			break;
+		default:
+			break;
+		}
 	}
 	
 }
