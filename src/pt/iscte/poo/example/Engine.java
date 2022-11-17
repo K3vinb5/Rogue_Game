@@ -11,7 +11,6 @@ import pt.iscte.poo.utils.Point2D;
 import pt.iscte.poo.utils.Vector2D;
 import java.awt.event.KeyEvent;
 
-
 public class Engine implements Observer {
 
 	// Window Attributes and others...
@@ -19,11 +18,11 @@ public class Engine implements Observer {
 	private ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
-	public static final int GRID_HEALTH = 1;
+	public static final int GRID_HEIGHT_STATS= 1;
 	
 	// Other Attributes
 	private Hero hero;
-	private Status status = new Status();
+	private Stats status = new Stats();
 	private static List<Level> levelList = new ArrayList<>();
 	private static int currentFloor;
 	private static int turns;
@@ -38,7 +37,7 @@ public class Engine implements Observer {
 
 	private Engine() {		
 		gui.registerObserver(this);
-		gui.setSize(GRID_WIDTH, GRID_HEIGHT + GRID_HEALTH);
+		gui.setSize(GRID_WIDTH, GRID_HEIGHT + GRID_HEIGHT_STATS);
 		gui.go();
 	}
 
@@ -63,7 +62,7 @@ public class Engine implements Observer {
 	}
 	
 	private void addStatus() {
-		for (GameElement g : status.getStatusElements()) {
+		for (GameElement g : status.getStatsElements()) {
 			gui.addImage(g);
 		}
 	}
@@ -90,28 +89,13 @@ public class Engine implements Observer {
 		// Hero Movement
 		int keyPressed = ((ImageMatrixGUI) source).keyPressed();
 		moveHero(keyPressed);
-		updateStatus(keyPressed);
+		updateInventoryStats(keyPressed);
 		test(keyPressed);
-		Direction newDirection;
-		Point2D newPosition;
 		
 		//Entity Movements
 		for(GameElement e : getLevel().getElementList() ){
-			switch (e.getName()) {
-			case "Skeleton":
-					Skeleton skeleton = (Skeleton)e;
-					moveEnemy(skeleton);
-				break;
-			case "Bat":
-					Bat bat = (Bat)e;
-					moveEnemy(bat);
-				break;
-			case "Thug":
-				Thug thug = (Thug)e;
-				moveEnemy(thug);
-				break;
-			default:
-				break;
+			if (e instanceof Enemy) {
+				moveEnemy((Enemy)e);
 			}
 		}
 		
@@ -179,7 +163,7 @@ public class Engine implements Observer {
 		}
 	}
 	
-	private void updateStatus(int keyPressed) {
+	private void updateInventoryStats(int keyPressed) {
 		switch (keyPressed) {
 		case KeyEvent.VK_NUMPAD1:
 				dropItem(0);
@@ -213,10 +197,31 @@ public class Engine implements Observer {
 			attacked.setHealth(attacked.getHealth() - attacker.getAttack());
 			if ( attacked.getHealth() <= 0 ) {
 				gui.removeImage(attacked);
+				if ( attacked.equals(hero)) {
+					status.redrawHealthBar(Stats.getHealthBarMapping(hero.getHealth(), hero.getMaxHealth()));
+					System.out.println("Current Health: " + hero.getHealth() + " Max Health: " + hero.getMaxHealth());
+					System.out.println(arrayToString(Stats.getHealthBarMapping(hero.getHealth(), hero.getMaxHealth())));
+					gui.update();
+				}
 				System.out.println(attacked.getName() + " will be removed");
+			}
+			
+			if ( attacked.equals(hero)) {
+				status.redrawHealthBar(Stats.getHealthBarMapping(hero.getHealth(), hero.getMaxHealth()));
+				System.out.println("Current Health: " + hero.getHealth() + " Max Health: " + hero.getMaxHealth());
+				System.out.println(arrayToString(Stats.getHealthBarMapping(hero.getHealth(), hero.getMaxHealth())));
 				gui.update();
 			}
+			
 		}
+	}
+	
+	public static String arrayToString(int[] array){
+	    String s = "";
+	    for (int i = 0; i < array.length; i++){
+	        s += array[i] + " ";
+	    }
+	    return s;
 	}
 	
 	private void interact() {
@@ -304,7 +309,7 @@ public class Engine implements Observer {
 			gui.removeImage(g);
 		
 		//Status Elements
-		for (GameElement g : status.getStatusElements()){
+		for (GameElement g : status.getStatsElements()){
 			gui.removeImage(g);
 		}
 	}
@@ -328,7 +333,7 @@ public class Engine implements Observer {
 		}
 		
 		//Status Elements
-		for (GameElement g : status.getStatusElements()) {
+		for (GameElement g : status.getStatsElements()) {
 			gui.addImage(g);
 		}
 		

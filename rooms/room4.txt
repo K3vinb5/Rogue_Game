@@ -1,0 +1,23 @@
+################
+#              #
+#           #  #
+#           #  #
+#   #########  #
+#      #       #
+#      #       #
+#      ####    #
+#              #
+################
+
+Thug,2,2
+Thug,10,15
+Bat,4,6
+Bat,4,7
+Bat,4,8
+Armor,8,8
+HealingPotion,8,3
+Key,7,7,KEY1
+Key,2,5,KEY2
+Skeleton,4,4
+Skeleton,6,4
+Sword,1,1

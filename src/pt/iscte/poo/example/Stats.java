@@ -6,17 +6,17 @@ import pt.iscte.poo.utils.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Status {
+public class Stats {
 	
 	private boolean[] slotsOccupied= new boolean[3];
 	private List<GameElement> itemsList= new ArrayList<>();
 	private int HEIGHT = Engine.GRID_HEIGHT;
-	private int WIDTH = Engine.GRID_WIDTH - 3;
+	private static int WIDTH = Engine.GRID_WIDTH - 3;
 	
-	public Status() {
+	public Stats() {
 		
 		for (int x = 0; x < Engine.GRID_WIDTH; x++) {
-			for (int y = Engine.GRID_HEIGHT; y != Engine.GRID_HEIGHT + Engine.GRID_HEALTH; y++) {
+			for (int y = Engine.GRID_HEIGHT; y != Engine.GRID_HEIGHT + Engine.GRID_HEIGHT_STATS; y++) {
 				if (x< Engine.GRID_WIDTH - 3) {
 					this.itemsList.add(new StatusComponent("Green", new Point2D(x,y)));
 				} else {
@@ -26,6 +26,8 @@ public class Status {
 		}
 	}
 
+	// Inventory related
+	
 	public int setItem(GameElement item) {
 		int i;
 		for (i = 0; i < slotsOccupied.length; i++) {
@@ -41,19 +43,13 @@ public class Status {
 	
 	public void removeItem(int slotNumber, GameElement item) {
 		//If not the last then:
-		if (slotNumber + 10 != itemsList.size() - 1) {
-			if (occupiedSlots() == 2) {
-				
-			}
-		}
-		
 		
 		itemsList.remove(item);
 		slotsOccupied[slotNumber] = false;
 	}
 	
 	public GameElement getItem(int slotNumber) {
-		int index=slotNumber + 10;
+		int index=slotNumber + Engine.GRID_WIDTH;
 		while(index >= itemsList.size()) {
 			index--;
 		}
@@ -72,12 +68,49 @@ public class Status {
 		return returnValue;
 	}
 	
-	public List<GameElement> getStatusElements(){
+	// HealthBar related
+	
+	public List<GameElement> getStatsElements(){
 		return itemsList;
 	}
 	
 	public boolean isFull() {
 		return (isOccupied(0) && isOccupied(1) && isOccupied(2));
+	}
+	
+    public static int[] getHealthBarMapping(double currentHealth, double maxHealth) {
+		double LeftRightMiddle = WIDTH*currentHealth/maxHealth;
+		double rightLeftMiddle = WIDTH - LeftRightMiddle;
+		boolean halfNotUsed = true;
+		int[] returnArray = new int[WIDTH];
+		
+		for (int i = 0; i < WIDTH; i++) {
+			if( i < rightLeftMiddle) {
+				returnArray[i] = 0;
+			}else if( halfNotUsed && isInNeighbourhood(i,rightLeftMiddle)){
+			    returnArray[i] = 2;
+			    halfNotUsed = false;
+			}else {
+				returnArray[i] = 1;
+			}
+		}		
+		return returnArray;
+	}
+	
+	private static boolean isInNeighbourhood(double f1, double f2){
+	    return Math.abs(f1 - f2) <= 0.7 && Math.abs(f1 - f2) >= 0.3; 
+	}
+	
+	public void redrawHealthBar(int[] healthBarMapping) {
+		for(int i = 0; i < healthBarMapping.length; i++) {
+			if (healthBarMapping[i] == 0 ) {
+				this.itemsList.get(i).setName("Red");
+			}else if (healthBarMapping[i] ==  1) {
+				this.itemsList.get(i).setName("Green");
+			}else {
+				this.itemsList.get(i).setName("RedGreen");
+			}
+		}
 	}
 
 	@Override
@@ -90,4 +123,5 @@ public class Status {
 		}
 		return returnValue;
 	}
+	
 }

@@ -9,8 +9,8 @@ import pt.iscte.poo.utils.Point2D;
 public abstract class Entity extends GameElement {
 	
 	// Entities exclusive attributes
-	public double health;
-	public double attack;
+	private double health;
+	private double attack;
 	
 	// Entity Constructor
 	public Entity(String name, Point2D position, double health, double attack) {
@@ -21,6 +21,9 @@ public abstract class Entity extends GameElement {
 
 	// Getters
 	public double getHealth() {
+		if (health < 0) {
+			return 0;
+		}
 		return health;
 	}
 	

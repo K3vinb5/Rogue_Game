@@ -7,11 +7,13 @@ public class Hero extends Entity{
 
 	private boolean hasSword;
 	private boolean hasArmor;
+	private double maxHealth;
 
 	public Hero(Point2D position) {
-		super("Hero", position, 1000, 1);
+		super("Hero", position, 10, 1);
 		hasSword = false;
 		hasArmor = false;
+		this.maxHealth=10;
 	}
 	
 	public boolean getSword() {
@@ -28,6 +30,10 @@ public class Hero extends Entity{
 	
 	public void setArmor(boolean b) {
 		hasArmor = b;
+	}
+	
+	public double getMaxHealth() {
+		return maxHealth;
 	}
 	
 	@Override
