@@ -85,13 +85,12 @@ public class Engine implements Observer {
 	
 	@Override
 	public void update(Observed source) {
-		
+		if (hero.getHealth() <= 0) {return;}
 		// Hero Movement
 		int keyPressed = ((ImageMatrixGUI) source).keyPressed();
 		moveHero(keyPressed);
 		updateInventoryStats(keyPressed);
 		test(keyPressed);
-		
 		//Entity Movements
 		for(GameElement e : getLevel().getElementList() ){
 			if (e instanceof Enemy) {
@@ -192,8 +191,9 @@ public class Engine implements Observer {
 	}
 	
 	private void attackEntity(Entity attacker, Entity attacked) {
-		if (attacked != null && !attacked.equals(attacker) && !(attacker instanceof Enemy && attacked instanceof Enemy) && attacker.getHealth() > 0) {
-			//System.out.println(attacked.getName() + " was attacked by " + attacker.getName());
+		Entity e = null;
+		boolean someoneDied = false;
+		if (attacked != null && !attacked.equals(attacker) && !(attacker instanceof Enemy && attacked instanceof Enemy) /*&& attacker.getHealth() > 0*/) {
 			attacked.setHealth(attacked.getHealth() - attacker.getAttack());
 			if ( attacked.getHealth() <= 0 ) {
 				gui.removeImage(attacked);
@@ -203,17 +203,18 @@ public class Engine implements Observer {
 					System.out.println(arrayToString(Stats.getHealthBarMapping(hero.getHealth(), hero.getMaxHealth())));
 					gui.update();
 				}
-				System.out.println(attacked.getName() + " will be removed");
+				e=attacked;
+				someoneDied = true;
 			}
-			
 			if ( attacked.equals(hero)) {
 				status.redrawHealthBar(Stats.getHealthBarMapping(hero.getHealth(), hero.getMaxHealth()));
 				System.out.println("Current Health: " + hero.getHealth() + " Max Health: " + hero.getMaxHealth());
 				System.out.println(arrayToString(Stats.getHealthBarMapping(hero.getHealth(), hero.getMaxHealth())));
 				gui.update();
 			}
-			
 		}
+		if (someoneDied && !(e instanceof Hero))
+			getLevel().getElementList().remove(e);
 	}
 	
 	public static String arrayToString(int[] array){

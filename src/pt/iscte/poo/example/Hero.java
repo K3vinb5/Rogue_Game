@@ -10,10 +10,10 @@ public class Hero extends Entity{
 	private double maxHealth;
 
 	public Hero(Point2D position) {
-		super("Hero", position, 10, 1);
+		super("Hero", position, 20, 1);
 		hasSword = false;
 		hasArmor = false;
-		this.maxHealth = 10;
+		this.maxHealth = 20;
 	}
 	
 	public boolean getSword() {

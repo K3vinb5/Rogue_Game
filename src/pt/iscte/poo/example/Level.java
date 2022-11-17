@@ -3,7 +3,7 @@ package pt.iscte.poo.example;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-//import java.util.Iterator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -36,9 +36,13 @@ public class Level {
 		return hero;
 	}
 	
-	public void removeFromLists(GameElement g) {
-		//Iterator<GameElement> itG = elementList.iterator();
-		elementList.remove(g);
+	public void removeFromList(GameElement g) {
+		Iterator<GameElement> it = elementList.iterator();
+		while(it.hasNext()) {
+			GameElement element = it.next();
+			if ( element.equals(g) )
+				it.remove();
+		}
 	}
 	
 	public String getName() {
@@ -46,25 +50,38 @@ public class Level {
 	}
 	
 	
+//	public boolean isValid(Point2D newPosition) {
+//		for (GameElement g : elementList) 
+//			if (newPosition.equals(g.getPosition())) {
+//				//Entities
+//				if(g instanceof Entity) {
+//					Entity e = (Entity)g;
+//					if (e.getHealth() > 0) {
+//						return false;
+//					}else {
+//						return true;
+//					}
+//				}
+//				//Items
+//				if (g instanceof Transposible) {
+//					return true;
+//				}
+//				return false;
+//			}
+//		return true;
+//	}
+	
 	public boolean isValid(Point2D newPosition) {
-		for (GameElement g : elementList) 
-			if (newPosition.equals(g.getPosition())) {
-				//Entities
-				if(g instanceof Entity) {
-					Entity e = (Entity)g;
-					if (e.getHealth() > 0) {
-						return false;
-					}else {
-						return true;
-					}
-				}
-				//Items
-				if (g instanceof Transposible) {
-					return true;
-				}
+		for (GameElement g : elementList) {
+			if (newPosition.equals(g.getPosition()) && (g instanceof Entity) ) { //posicao ser igual a de um inimigo
 				return false;
+			}else if (newPosition.equals(g.getPosition()) && !(g instanceof Entity) && !(g instanceof Transposible)) { //Posicao ser igual a de um objeto nao transposivel
+				return false;
+			}else if (newPosition.equals(g.getPosition()) &&  (g instanceof Transposible)) { //Posicao ser igual a de um objeto transposivel
+				return true;
 			}
-		return true;
+		}
+		return true; //Posicao nao ser igual a nada
 	}
 	
 	public Entity getEntity(Point2D position) {
