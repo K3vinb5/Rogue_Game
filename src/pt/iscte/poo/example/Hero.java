@@ -13,7 +13,7 @@ public class Hero extends Entity{
 		super("Hero", position, 10, 1);
 		hasSword = false;
 		hasArmor = false;
-		this.maxHealth=10;
+		this.maxHealth = 10;
 	}
 	
 	public boolean getSword() {

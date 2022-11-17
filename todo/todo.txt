@@ -1,0 +1,7 @@
+interface enemy
+interface attackable
+interface dropable // maybe
+interface pickable
+interface door
+interface interactable
+(ter 3 objetos objetos na dropable e substituilos pelo certo etc.)

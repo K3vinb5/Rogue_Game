@@ -85,15 +85,19 @@ public class Stats {
 		int[] returnArray = new int[WIDTH];
 		
 		for (int i = 0; i < WIDTH; i++) {
-			if( i < rightLeftMiddle) {
-				returnArray[i] = 0;
-			}else if( halfNotUsed && isInNeighbourhood(i,rightLeftMiddle)){
+			if( halfNotUsed && isInNeighbourhood(i,rightLeftMiddle)) {
 			    returnArray[i] = 2;
 			    halfNotUsed = false;
+			}else if( i < rightLeftMiddle){
+			    returnArray[i] = 0;
 			}else {
 				returnArray[i] = 1;
 			}
-		}		
+		}
+		
+		if (currentHealth > 0 && returnArray[WIDTH - 1] == 0) 
+			returnArray[WIDTH - 1] = 2;
+		
 		return returnArray;
 	}
 	
