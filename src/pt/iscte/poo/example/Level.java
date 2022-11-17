@@ -29,7 +29,8 @@ public class Level {
 	
 	public void setHero(Hero hero) {
 		this.hero = hero;
-		elementList.add(hero);
+		if (!elementList.contains(hero))
+			elementList.add(hero);
 	}
 	
 	public Hero getHero() {

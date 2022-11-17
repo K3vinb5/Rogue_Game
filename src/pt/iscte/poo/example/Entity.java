@@ -6,6 +6,7 @@ package pt.iscte.poo.example;
 import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
 
+
 public abstract class Entity extends GameElement {
 	
 	// Entities exclusive attributes

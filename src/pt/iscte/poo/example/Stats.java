@@ -101,8 +101,8 @@ public class Stats {
 		return returnArray;
 	}
 	
-	private static boolean isInNeighbourhood(double f1, double f2){
-	    return Math.abs(f1 - f2) <= 0.7 && Math.abs(f1 - f2) >= 0.3; 
+	public static boolean isInNeighbourhood(double f1, double f2){
+	    return Math.abs(f1 - f2) < 0.5 && Math.abs(f1-f2) != 0;
 	}
 	
 	public void redrawHealthBar(int[] healthBarMapping) {
