@@ -10,14 +10,15 @@ public class Stats {
 	
 	private boolean[] slotsOccupied= new boolean[3];
 	private List<GameElement> itemsList= new ArrayList<>();
-	private int HEIGHT = Engine.GRID_HEIGHT;
-	private static int WIDTH = Engine.GRID_WIDTH - 3;
+	private static final int HEIGHT = Engine.GRID_HEIGHT;
+	private static final int WIDTH = Engine.GRID_WIDTH - 3;
+	public final int INVENTORY_STARTING_INDEX= Engine.GRID_WIDTH;
 	
 	public Stats() {
 		
 		for (int x = 0; x < Engine.GRID_WIDTH; x++) {
 			for (int y = Engine.GRID_HEIGHT; y != Engine.GRID_HEIGHT + Engine.GRID_HEIGHT_STATS; y++) {
-				if (x< Engine.GRID_WIDTH - 3) {
+				if (x< WIDTH) {
 					this.itemsList.add(new StatusComponent("Green", new Point2D(x,y)));
 				} else {
 					this.itemsList.add(new StatusComponent("Black", new Point2D(x,y)));
@@ -26,8 +27,9 @@ public class Stats {
 		}
 	}
 
-	// Inventory related
+	// Inventory Related Methods
 	
+	// Adds an items to the first available slot in the inventory and returns the slot where that items was stored
 	public int setItem(GameElement item) {
 		int i;
 		for (i = 0; i < slotsOccupied.length; i++) {
@@ -40,14 +42,44 @@ public class Stats {
 		}
 		return i;
 	}
-	
+	// Removes an item from a given inventory slot and if necessary shifts all the other items
 	public void removeItem(int slotNumber, GameElement item) {
-		//If not the last then:
 		
-		itemsList.remove(item);
-		slotsOccupied[slotNumber] = false;
+		int lastSlot = slotsOccupied.length - 1;
+		// Shifts all slots to the left if the removed item was not in the last slot
+		if (occupiedSlots() > 1 && slotNumber == lastSlot) {
+			// Last slot case
+			itemsList.remove(item);
+			slotsOccupied[lastSlot] = false;
+		} else if (occupiedSlots() >= 2) {
+			// Multiple Items case and not last
+			for (int i = 0; i < lastSlot; i++) {
+				if (slotsOccupied[i + 1]) {
+					itemsList.get(INVENTORY_STARTING_INDEX + i + 1).setPosition(new Point2D(
+							itemsList.get(INVENTORY_STARTING_INDEX + i + 1).getPosition().getX() - 1, HEIGHT));
+					slotsOccupied[i] = true;
+					slotsOccupied[i + 1] = false;
+				}
+			}
+			itemsList.remove(item);
+		} else {
+			// One slot case
+			itemsList.remove(item);
+			slotsOccupied[slotNumber] = false;
+		}
+		
 	}
-	
+	public int getIndex(GameElement element) {
+		int index = 0;
+		for (GameElement g : itemsList) {
+			if (g.equals(element)) {
+				return index;
+			}
+			index++;
+		}
+		return -1;
+	}
+	// Note : I don't remember what i did here, so if there is any problem this might be the culprit
 	public GameElement getItem(int slotNumber) {
 		int index=slotNumber + Engine.GRID_WIDTH;
 		while(index >= itemsList.size()) {
@@ -55,11 +87,11 @@ public class Stats {
 		}
 		return itemsList.get(index);
 	}
-	
+	// Returns a boolean telling if the given slot is occupied
 	public boolean isOccupied(int slotNumber) {
 		return slotsOccupied[slotNumber];
 	}
-	
+	// Returns the number of occupied slots
 	public int occupiedSlots() {
 		int returnValue = 0;
 		for (int i  = 0; i < slotsOccupied.length; i++)
@@ -68,7 +100,17 @@ public class Stats {
 		return returnValue;
 	}
 	
-	// HealthBar related
+	public List<Key> getKeys(){
+		List<Key> returnList = new ArrayList<>();
+		for (int i = INVENTORY_STARTING_INDEX; i < INVENTORY_STARTING_INDEX + occupiedSlots(); i++ ) {
+			if (itemsList.get(i) instanceof Key ) {
+				returnList.add((Key)itemsList.get(i));
+			}
+		}
+		return returnList;
+	}
+	
+	// HealthBar Related Methods
 	
 	public List<GameElement> getStatsElements(){
 		return itemsList;

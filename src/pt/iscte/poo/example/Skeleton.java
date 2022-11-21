@@ -3,7 +3,7 @@ package pt.iscte.poo.example;
 import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
 
-public class Skeleton extends Enemy{
+public class Skeleton extends Entity implements Enemy{
 
 	// Skeleton Constructor
 	public Skeleton(Point2D position) {

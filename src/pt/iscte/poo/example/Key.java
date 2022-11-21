@@ -2,21 +2,21 @@ package pt.iscte.poo.example;
 
 import pt.iscte.poo.utils.Point2D;
 
-public class Key extends GameElement implements Transposible{
+public class Key extends GameElement implements Transposible, Pickable{
 
-	private String keyId;
+	private String keyID;
 	
 	public Key( Point2D position, String keyId) {
 		super("Key", position, 1);
-		this.setKeyId(keyId);
+		this.keyID = keyId;
 	}
 
-	public String getKeyId() {
-		return keyId;
+	public String getKeyID() {
+		return keyID;
 	}
 
-	public void setKeyId(String keyId) {
-		this.keyId = keyId;
+	public void setKeyID(String keyId) {
+		this.keyID = keyId;
 	}
 	
 	

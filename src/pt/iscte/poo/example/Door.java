@@ -36,6 +36,15 @@ public class Door extends GameElement implements Transposible{
 	public String getKeyID() {
 		return keyID;
 	}
+	public void setLocked(boolean b) {
+		if (b) {
+			this.setName("DoorClosed");
+			this.isLocked = true;
+		}else {
+			this.setName("DoorOpen");
+			this.isLocked = false;
+		}
+	}
 
 	@Override
 	public int getLayer() {

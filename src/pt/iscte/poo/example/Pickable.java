@@ -1,5 +1,5 @@
 package pt.iscte.poo.example;
 
-public interface Enemy{
+public interface Pickable {
 
 }

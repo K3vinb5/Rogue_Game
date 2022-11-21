@@ -18,4 +18,4 @@ HealingPotion,8,3
 Door,0,2,room1,9,2,KEY1
 Door,0,7,room1,9,7
 Key,7,6,KEY1
-Key,2,4,KEY2
+Key,2,3,KEY2

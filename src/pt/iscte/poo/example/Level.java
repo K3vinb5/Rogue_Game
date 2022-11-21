@@ -50,41 +50,6 @@ public class Level {
 		return name;
 	}
 	
-	
-//	public boolean isValid(Point2D newPosition) {
-//		for (GameElement g : elementList) 
-//			if (newPosition.equals(g.getPosition())) {
-//				//Entities
-//				if(g instanceof Entity) {
-//					Entity e = (Entity)g;
-//					if (e.getHealth() > 0) {
-//						return false;
-//					}else {
-//						return true;
-//					}
-//				}
-//				//Items
-//				if (g instanceof Transposible) {
-//					return true;
-//				}
-//				return false;
-//			}
-//		return true;
-//	}
-	
-	public boolean isValid(Point2D newPosition) {
-		for (GameElement g : elementList) {
-			if (newPosition.equals(g.getPosition()) && (g instanceof Entity) ) { //posicao ser igual a de um inimigo
-				return false;
-			}else if (newPosition.equals(g.getPosition()) && !(g instanceof Entity) && !(g instanceof Transposible)) { //Posicao ser igual a de um objeto nao transposivel
-				return false;
-			}else if (newPosition.equals(g.getPosition()) &&  (g instanceof Transposible)) { //Posicao ser igual a de um objeto transposivel
-				return true;
-			}
-		}
-		return true; //Posicao nao ser igual a nada
-	}
-	
 	public Entity getEntity(Point2D position) {
 		for (GameElement g : elementList) 
 			if (g.getPosition().equals(position) && (g instanceof Entity)) {
@@ -105,13 +70,13 @@ public class Level {
 	}
 	
 	public Point2D getValidNeighboringPosition(Point2D position) {
-		if (isValid(position.plus(Direction.UP.asVector()))){
+		if (hero.isValid(position.plus(Direction.UP.asVector()))){
 			return position.plus(Direction.UP.asVector());
-		} else if (isValid(position.plus(Direction.LEFT.asVector()))){
+		} else if (hero.isValid(position.plus(Direction.LEFT.asVector()))){
 			return position.plus(Direction.LEFT.asVector());
-		} else if (isValid(position.plus(Direction.DOWN.asVector()))){
+		} else if (hero.isValid(position.plus(Direction.DOWN.asVector()))){
 			return position.plus(Direction.DOWN.asVector());
-		}else if (isValid(position.plus(Direction.RIGHT.asVector()))){
+		}else if (hero.isValid(position.plus(Direction.RIGHT.asVector()))){
 			return position.plus(Direction.RIGHT.asVector());
 		}
 		return null;
@@ -237,6 +202,9 @@ public class Level {
 						//We'll use constructor 1
 						returnEntityList.add(new Door(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2])), attributes[3], new Point2D(Integer.parseInt(attributes[4]), Integer.parseInt(attributes[5])), attributes[6] ));
 					}
+				break;
+				case "Treasure":
+					returnEntityList.add(new Treasure(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2]))));
 				break;
 				default:
 					break;
