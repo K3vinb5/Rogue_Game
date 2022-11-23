@@ -1,23 +1,20 @@
-################
-#              #
-#           #  #
-#           #  #
-#   #########  #
-#      #       #
-#      #       #
-#      ####    #
-#              #
-################
+##########
+         #
+#    #####
+#    #   #
+#        #
+#    #   #
+#    #   #
+#    #####
+#         
+##########         
 
-Thug,2,2
-Thug,10,15
-Bat,4,6
-Bat,4,7
-Bat,4,8
-Armor,8,8
-HealingPotion,8,3
-Key,7,7,KEY1
-Key,2,5,KEY2
-Skeleton,4,4
-Skeleton,6,4
-Sword,1,1
+RedDoor,0,1,room2,9,8,KEY10
+RedDoor,9,8,room5,0,8,KEY11
+GoldenKey,7,6,KEY11
+Thief,8,8
+Scorpion,3,8
+Skeleton,2,5
+Bat,1,4
+Bat,3,4
+SuperHealingPotion,8,1

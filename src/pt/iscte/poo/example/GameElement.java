@@ -8,6 +8,7 @@ public abstract class GameElement implements ImageTile{
 	private String name;
 	private Point2D position; 
 	private int layer; 
+	private Engine gui = Engine.getInstance();
 	
 	// GameElements Constructor
 	public GameElement(String name, Point2D position, int layer) {
@@ -36,6 +37,10 @@ public abstract class GameElement implements ImageTile{
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public Engine getEngine() {
+		return gui;
 	}
 	
 	//temp

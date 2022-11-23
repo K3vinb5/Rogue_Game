@@ -16,7 +16,7 @@ public class Skeleton extends Entity implements Enemy{
 
 	@Override
 	public boolean move(Direction d) {
-		if ( Engine.getTurns() % 2 != 0 ) {
+		if ( getEngine().getTurns() % 2 != 0 ) {
 			 return super.move(d);
 			}
 		return false;

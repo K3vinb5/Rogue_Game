@@ -1,9 +1,3 @@
-interface enemy
-interface attackable
-interface dropable // maybe
-interface pickable
-interface door
-interface interactable
-(ter 3 objetos objetos na dropable e substituilos pelo certo etc.)
-
-Fix Inventory
+bug poder mover pra dentro de enemy se o mesmo tiver decima de uma chave
+nao poder apanhar items quando os mesmos estao numa dorway
+Usar a materia que demos, expressoes lambda por exemplo (Implementar mais tarde isto)

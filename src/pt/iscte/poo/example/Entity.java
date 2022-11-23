@@ -41,25 +41,6 @@ public abstract class Entity extends GameElement implements Movable, Attackable{
 		this.attack = attack;
 	}
 	
-	public boolean isValid(Point2D newPosition) {
-		boolean returnValue = true;
-		for (GameElement g : Engine.getLevel().getElementList()) {
-			if (newPosition.equals(g.getPosition()) && (g instanceof Attackable) ) { //posicao ser igual a de um atacavel
-				returnValue = false;
-			}
-			if (newPosition.equals(g.getPosition()) && !(g instanceof Entity) && !(g instanceof Transposible)) { //Posicao ser igual a de um objeto nao transposivel
-				returnValue = false;
-			}
-			if (newPosition.equals(g.getPosition()) &&  (g instanceof Transposible)) { //Posicao ser igual a de um objeto transposivel
-				returnValue = true;
-			}
-			if ( ( newPosition.equals(g.getPosition()) ) && ( this instanceof Enemy) && (g instanceof Door) ){
-				returnValue = false;
-			}
-		}
-		return returnValue; //Posicao nao ser igual a nada
-	}
-	
 	// Entity related methods
 	@Override
 	public boolean move(Direction d) {
@@ -68,10 +49,10 @@ public abstract class Entity extends GameElement implements Movable, Attackable{
 		boolean withinBounds = (newPosition.getX() < Engine.GRID_WIDTH && newPosition.getY() < Engine.GRID_HEIGHT && newPosition.getX() >= 0 && newPosition.getY() >= 0);
 		
 		//Checks if new position is valid
-		if  (withinBounds && isValid(newPosition)){
+		if  (withinBounds && getEngine().getLevel().isValid(newPosition, this)){
 			this.setPosition(newPosition);
 			return true;
-		}else if (Engine.getLevel().getEntity(newPosition) instanceof Entity) {
+		}else if (getEngine().getLevel().getEntity(newPosition) instanceof Entity) {
 			return true;
 		}else {
 			return false;

@@ -10,20 +10,30 @@ public class Stats {
 	
 	private boolean[] slotsOccupied= new boolean[3];
 	private List<GameElement> itemsList= new ArrayList<>();
-	private static final int HEIGHT = Engine.GRID_HEIGHT;
-	private static final int WIDTH = Engine.GRID_WIDTH - 3;
-	public final int INVENTORY_STARTING_INDEX= Engine.GRID_WIDTH;
+	private boolean isVisible;
+	private static int HEIGHT;
+	private static int WIDTH;
+	public final int INVENTORY_STARTING_INDEX;
 	
-	public Stats() {
-		
-		for (int x = 0; x < Engine.GRID_WIDTH; x++) {
-			for (int y = Engine.GRID_HEIGHT; y != Engine.GRID_HEIGHT + Engine.GRID_HEIGHT_STATS; y++) {
-				if (x< WIDTH) {
-					this.itemsList.add(new StatusComponent("Green", new Point2D(x,y)));
-				} else {
-					this.itemsList.add(new StatusComponent("Black", new Point2D(x,y)));
+	public Stats(boolean isVisible) {
+		this.isVisible = isVisible;
+		if (isVisible) {
+			WIDTH = Engine.GRID_WIDTH - 3;
+			HEIGHT = Engine.GRID_HEIGHT;
+			INVENTORY_STARTING_INDEX = Engine.GRID_WIDTH;
+			for (int x = 0; x < Engine.GRID_WIDTH; x++) {
+				for (int y = Engine.GRID_HEIGHT; y != Engine.GRID_HEIGHT + Engine.GRID_HEIGHT_STATS; y++) {
+					if (x< WIDTH) {
+						this.itemsList.add(new StatusComponent("Green", new Point2D(x,y)));
+					} else {
+						this.itemsList.add(new StatusComponent("Black", new Point2D(x,y)));
+					}
 				}
 			}
+		}else {
+			INVENTORY_STARTING_INDEX = 0;
+			WIDTH = 0;
+			HEIGHT = 0;
 		}
 	}
 
@@ -100,11 +110,11 @@ public class Stats {
 		return returnValue;
 	}
 	
-	public List<Key> getKeys(){
-		List<Key> returnList = new ArrayList<>();
+	public List<KeyComponent> getKeys(){
+		List<KeyComponent> returnList = new ArrayList<>();
 		for (int i = INVENTORY_STARTING_INDEX; i < INVENTORY_STARTING_INDEX + occupiedSlots(); i++ ) {
 			if (itemsList.get(i) instanceof Key ) {
-				returnList.add((Key)itemsList.get(i));
+				returnList.add((KeyComponent)itemsList.get(i));
 			}
 		}
 		return returnList;
@@ -118,6 +128,10 @@ public class Stats {
 	
 	public boolean isFull() {
 		return (isOccupied(0) && isOccupied(1) && isOccupied(2));
+	}
+	
+	public boolean isVisible() {
+		return isVisible;
 	}
 	
     public static int[] getHealthBarMapping(double currentHealth, double maxHealth) {

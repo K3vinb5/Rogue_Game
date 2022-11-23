@@ -2,52 +2,14 @@ package pt.iscte.poo.example;
 
 import pt.iscte.poo.utils.Point2D;
 
-public class Door extends GameElement implements Transposible{
+public class Door  extends DoorComponent{
 
-	private int room;
-	private Point2D newPostion;
-	private String keyID;
-	boolean isLocked;
-	
-	//Constructor 1
-	public Door( Point2D position, String room, Point2D newPosition, String keyID) {
-		super("DoorClosed", position, 1);
-		this.keyID = keyID;
-		this.newPostion = newPosition;
-		this.room=Integer.parseInt(room.split("room")[1]);
-		this.isLocked = true;
+	public Door(Point2D position, String room, Point2D newPosition, String keyID) {
+		super(position, room, newPosition, keyID);
 	}
-	
-	//Constructor 2
+
 	public Door(Point2D position, String room, Point2D newPosition) {
-		super("DoorOpen", position, 1);
-		this.newPostion = newPosition;
-		this.room = Integer.parseInt(room.split("room")[1]);
-		this.isLocked = false;
-	}
-	public int getRoom() {
-		return room;
+		super(position, room, newPosition);
 	}
 
-	public Point2D getNewPostion() {
-		return newPostion;
-	}
-
-	public String getKeyID() {
-		return keyID;
-	}
-	public void setLocked(boolean b) {
-		if (b) {
-			this.setName("DoorClosed");
-			this.isLocked = true;
-		}else {
-			this.setName("DoorOpen");
-			this.isLocked = false;
-		}
-	}
-
-	@Override
-	public int getLayer() {
-		return 1;
-	}
 }

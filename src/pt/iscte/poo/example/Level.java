@@ -7,20 +7,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
+import pt.iscte.poo.gui.ImageTile;
 import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
 
 public class Level {
 	
 	private List<GameElement> elementList = new ArrayList<>();
+	private List<Floor> floorList = new ArrayList<>();
 	private String name;
 	private Hero hero;
+	private Engine gui = Engine.getInstance();
 	
 	public Level(String path) {
+		floorList.addAll(readFloors(path));
 		elementList.addAll(readWalls(path));
 		elementList.addAll(readEntity(path));
 		elementList.addAll(readItems(path));
+		elementList.addAll(readExtraContent(path)); // Extra content, only applies for level 4 onwards
 		name = "room" + path.split("room")[1];
+	}
+	
+	public List<Floor> getFloorList(){
+		return floorList;
 	}
 	
 	public List<GameElement> getElementList() {
@@ -46,6 +55,11 @@ public class Level {
 		}
 	}
 	
+	public void insertIntoList(GameElement g) {
+		if (!elementList.contains(g))
+			elementList.add(g);
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -60,6 +74,14 @@ public class Level {
 		return null;
 	}
 	
+	public GameElement getElement(Point2D position) {
+		for (GameElement g : elementList) 
+			if (g.getPosition().equals(position)) {
+				return g;
+			}
+		return null;
+	}
+	
 	public GameElement getItem(Point2D position) {
 		for (GameElement g : elementList) {
 			if (g.getPosition().equals(position) && g instanceof Transposible) {
@@ -70,13 +92,14 @@ public class Level {
 	}
 	
 	public Point2D getValidNeighboringPosition(Point2D position) {
-		if (hero.isValid(position.plus(Direction.UP.asVector()))){
+		Hero hero = gui.getLevel().getHero();
+		if (isValid(position.plus(Direction.UP.asVector()), hero)){
 			return position.plus(Direction.UP.asVector());
-		} else if (hero.isValid(position.plus(Direction.LEFT.asVector()))){
+		} else if (isValid(position.plus(Direction.LEFT.asVector()), hero)){
 			return position.plus(Direction.LEFT.asVector());
-		} else if (hero.isValid(position.plus(Direction.DOWN.asVector()))){
+		} else if (isValid(position.plus(Direction.DOWN.asVector()), hero)){
 			return position.plus(Direction.DOWN.asVector());
-		}else if (hero.isValid(position.plus(Direction.RIGHT.asVector()))){
+		}else if (isValid(position.plus(Direction.RIGHT.asVector()), hero)){
 			return position.plus(Direction.RIGHT.asVector());
 		}
 		return null;
@@ -119,6 +142,48 @@ public class Level {
 		return wallList;
 		
 	}
+		
+		public static ArrayList<Floor> readFloors(String FilePath){
+			
+		ArrayList<Floor> floorList= new ArrayList<>();
+		
+		try {
+			
+			File file = new File(FilePath);
+			Scanner scanner = new Scanner(file);
+			int j = 0;
+			
+			// Reads Level
+			while(scanner.hasNextLine()) {
+				
+				if (j > Engine.GRID_HEIGHT ) {break;} 
+				
+				String line = scanner.nextLine();
+				char[] lineArray = line.toCharArray();
+				int i = 0;
+				
+				for (char c : lineArray) {
+					if (c == ' ') {
+						if ((int)(Math.random() * 20) < 1) {
+							floorList.add(new Floor("Grass", new Point2D(i, j) ) );
+						}else {							
+							floorList.add( new Floor(new Point2D(i, j) ) );
+						}
+					}
+					i++; // increments column counter (x)
+				}
+				j++; //Increments line counter (y)
+			}
+						
+			scanner.close();
+			
+		} catch (FileNotFoundException exception ) {
+			System.err.println("Ficheiro não encontrado");
+		}
+		
+		return floorList;
+		
+	}
 	
 	public static List<Entity> readEntity(String filePath) {
 		
@@ -150,6 +215,12 @@ public class Level {
 					break;
 				case "Thug":
 					returnEntityList.add(new Thug( new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2]))));
+					break;
+				case "Thief":
+					returnEntityList.add(new Thief( new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2]))));
+					break;
+				case "Scorpion":
+					returnEntityList.add(new Scorpion( new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2]))));
 					break;
 				default:
 					break;
@@ -217,5 +288,107 @@ public class Level {
 		}
 		return returnEntityList;
 	}	
+	
+	public static List<GameElement> readExtraContent(String filePath) {
+		
+		List<GameElement> returnEntityList = new ArrayList<>();
+		
+		try {
+			
+			File file = new File(filePath);
+			Scanner scanner = new Scanner(file);
+			
+			// Skipping the grid information
+			for (int i = 0; i < Engine.GRID_HEIGHT; i++) {
+				scanner.nextLine();
+			}
+			
+			while(scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				String[] attributes = line.split(",");
+				
+				switch (attributes[0]) {
+				case "SuperHealingPotion":
+					returnEntityList.add(new SuperHealingPotion(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2]))));
+				break;
+				case "GoldenKey":
+					returnEntityList.add(new GoldenKey(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2])), attributes[3]));
+				break;
+				case "RedDoor":
+					if ( attributes.length == 6 ) {
+						//We'll use Constructor 2
+						returnEntityList.add(new RedDoor(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2])), attributes[3], new Point2D(Integer.parseInt(attributes[4]), Integer.parseInt(attributes[5])) ));
+					}else if (attributes.length == 7) {
+						//We'll use constructor 1
+						returnEntityList.add(new RedDoor(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2])), attributes[3], new Point2D(Integer.parseInt(attributes[4]), Integer.parseInt(attributes[5])), attributes[6] ));
+					}
+				break;
+				case "DiamondTreasure":
+					returnEntityList.add(new Treasure(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2]))));
+				break;
+				default:
+					break;
+				}
+				
+			}
+			scanner.close();
+		} catch (FileNotFoundException e) {
+			System.err.println("File not Found");		
+		}
+		return returnEntityList;
+	}	
+	
+	public boolean isValid(Point2D newPosition, Entity caller) {
+		boolean returnValue = true;
+		for (GameElement g : gui.getLevel().getElementList()) {
+			if (newPosition.equals(g.getPosition()) && (g instanceof Attackable) ) { //posicao ser igual a de um atacavel
+				returnValue = returnValue && false;
+			}
+			if (newPosition.equals(g.getPosition()) && !(g instanceof Entity) && !(g instanceof Transposible)) { //Posicao ser igual a de um objeto nao transposivel
+				returnValue = returnValue && false;
+			}
+			if (newPosition.equals(g.getPosition()) &&  (g instanceof DoorComponent) && !(caller instanceof Hero) ) { //Posicao ser igual a de um objeto transposivel
+				returnValue = returnValue && false;
+			}
+			if (newPosition.equals(g.getPosition()) &&  (g instanceof Transposible) ) { //Posicao ser igual a de um objeto transposivel
+				returnValue = returnValue && true;
+			}
+		}
+		return returnValue; //Posicao nao ser igual a nada
+	}
+	
+	
+	public void loadLevel(int newLevel, Point2D newPosition) {
+		// Removes all Images (Except floors)
+		gui.removeSprites();
+		Hero hero = gui.getLevel().getHero();
+		gui.setCurrentFloor(newLevel);
+		gui.getLevel().setHero(hero);
+
+		//Floor Elements
+		for (GameElement g : gui.getLevel().getFloorList() ) {
+			gui.addSprite(g);
+		}
+		
+		// Level Elements
+		for (GameElement g : gui.getLevel().getElementList()) {
+			if (g instanceof Entity) {
+				Entity e = (Entity) g;
+				if (e.getHealth() > 0) {
+					gui.addSprite(g);
+				}
+			} else {
+				gui.addSprite(g);
+			}
+		}
+
+		// Status Elements
+		for (GameElement g : hero.getStats().getStatsElements()) {
+			gui.addSprite(g);
+		}
+
+		hero.setPosition(newPosition);
+		gui.updateGui();
+	}
 	
 }
