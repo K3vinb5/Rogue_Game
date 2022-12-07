@@ -64,13 +64,16 @@ public class Level {
 		return name;
 	}
 	
-	public Entity getEntity(Point2D position) {
-		for (GameElement g : elementList) 
+	public GameElement getEntity(Point2D position) {
+		for (GameElement g : elementList) {
+			
 			if (g.getPosition().equals(position) && (g instanceof Entity)) {
 				Entity e = (Entity)g;
 				if(e.getHealth() > 0)
 					return e;
 			}
+
+		}
 		return null;
 	}
 	
@@ -254,7 +257,7 @@ public class Level {
 				
 				switch (attributes[0]) {
 				case "Sword":
-						returnEntityList.add(new Sword(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2]))));
+						returnEntityList.add(new Sword(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2])),2));
 					break;
 				case "HealingPotion":
 					returnEntityList.add(new HealingPotion(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2]))));
@@ -338,7 +341,7 @@ public class Level {
 		return returnEntityList;
 	}	
 	
-	public boolean isValid(Point2D newPosition, Entity caller) {
+	public <T> boolean isValid(Point2D newPosition, T caller) {
 		boolean returnValue = true;
 		for (GameElement g : gui.getLevel().getElementList()) {
 			if (newPosition.equals(g.getPosition()) && (g instanceof Attackable) ) { //posicao ser igual a de um atacavel

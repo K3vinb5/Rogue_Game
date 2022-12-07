@@ -10,7 +10,7 @@ public class Hero extends Entity{
 	private Sword sword;
 	private Armor armor;
 	private Stats stats = new Stats(true); // has to always be true
-	private static final double maxHealth = 100;
+	private static final double maxHealth = 50;
 
 	public Hero(Point2D position) {
 		super("Hero", position, maxHealth, 1);
@@ -104,7 +104,7 @@ public class Hero extends Entity{
 	@Override
 	public double getAttack() {
 		if (this.getSword()) {
-			return super.getAttack()*2;
+			return super.getAttack()*sword.getDamage();
 		}else {
 			return super.getAttack();
 		}

@@ -58,8 +58,29 @@ public abstract class Entity extends GameElement implements Movable, Attackable{
 			return false;
 		}
 	}
+	
+	public void attackEntity(Entity attacked) {
+		Entity e = null;
+		boolean someoneDied = false;
+		Entity attacker = this;
+		if (attacked != null && !attacked.equals(attacker) && !(attacker instanceof Enemy && attacked instanceof Enemy)) {
+			attacked.setHealth(attacked.getHealth() - attacker.getAttack());
+			if (attacked.getHealth() <= 0) {
+				getEngine().removeSprite(attacked);
+				getEngine().redrawHealthBarIf(attacked.equals(getEngine().getLevel().getHero()));
+				e = attacked;
+				someoneDied = true;
+			}
+			getEngine().redrawHealthBarIf(attacked.equals(getEngine().getLevel().getHero()));
+		}
+		if (someoneDied && !(e instanceof Hero)) {
+			getEngine().getLevel().getElementList().remove(e);
+		}	else if (someoneDied && e instanceof Hero) {
+			//gui.dispose();
+		}
+	}
 
-	// Because all entities layers are 1:
+	// Because all entities layers are 2:
 	@Override
 	public int getLayer() {
 		return 2;

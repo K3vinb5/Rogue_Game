@@ -10,3 +10,4 @@
 ##########
 
 RedDoor,0,8,room4,9,8,KEY11
+RedDoor,9,1,room6,0,1

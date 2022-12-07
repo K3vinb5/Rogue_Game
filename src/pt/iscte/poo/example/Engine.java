@@ -45,7 +45,7 @@ public class Engine implements Observer {
 		userName = gui.askUser("Please insert your name: ");
 		//gui.setMessage("Test");
 		currentFloor = 0;
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 7; i++)
 			levelList.add(new Level("rooms//room" + (currentFloor + i) + ".txt"));
 		
 //		currentFloor = 0;
@@ -173,7 +173,7 @@ public class Engine implements Observer {
 			newDirection = Direction.forVector(Vector2D.movementVector(e.getPosition(), hero.getPosition()));
 			newPosition = e.getPosition().plus(newDirection.asVector());
 			if (e.move(newDirection))
-				attackEntity(e, getLevel().getEntity(newPosition));
+				e.attackEntity((Entity)getLevel().getEntity(newPosition));
 		}
 	}
 
@@ -186,7 +186,8 @@ public class Engine implements Observer {
 			newDirection = Direction.UP;
 			newPosition = hero.getPosition().plus(newDirection.asVector());
 			if (hero.move(newDirection)) {
-				attackEntity(hero, getLevel().getEntity(newPosition));
+				if ( getLevel().getEntity(newPosition) instanceof Entity)
+					hero.attackEntity((Entity)getLevel().getEntity(newPosition));
 				interact();
 			}
 			turns++;
@@ -195,7 +196,8 @@ public class Engine implements Observer {
 			newDirection = Direction.LEFT;
 			newPosition = hero.getPosition().plus(newDirection.asVector());
 			if (hero.move(newDirection)) {
-				attackEntity(hero, getLevel().getEntity(newPosition));
+				if ( getLevel().getEntity(newPosition) instanceof Entity)
+					hero.attackEntity((Entity)getLevel().getEntity(newPosition));
 				interact();
 			}
 			turns++;
@@ -204,7 +206,8 @@ public class Engine implements Observer {
 			newDirection = Direction.RIGHT;
 			newPosition = hero.getPosition().plus(newDirection.asVector());
 			if (hero.move(newDirection)) {
-				attackEntity(hero, getLevel().getEntity(newPosition));
+				if ( getLevel().getEntity(newPosition) instanceof Entity)
+					hero.attackEntity((Entity)getLevel().getEntity(newPosition));
 				interact();
 			}
 			turns++;
@@ -213,33 +216,14 @@ public class Engine implements Observer {
 			newDirection = Direction.DOWN;
 			newPosition = hero.getPosition().plus(newDirection.asVector());
 			if (hero.move(newDirection)) {
-				attackEntity(hero, getLevel().getEntity(newPosition));
+				if ( getLevel().getEntity(newPosition) instanceof Entity)
+					hero.attackEntity((Entity)getLevel().getEntity(newPosition));
 				interact();
 			}
 			turns++;
 			break;
 		default:
 			break;
-		}
-	}
-	
-	public void attackEntity(Entity attacker, Entity attacked) {
-		Entity e = null;
-		boolean someoneDied = false;
-		if (attacked != null && !attacked.equals(attacker) && !(attacker instanceof Enemy && attacked instanceof Enemy)) {
-			attacked.setHealth(attacked.getHealth() - attacker.getAttack());
-			if (attacked.getHealth() <= 0) {
-				gui.removeImage(attacked);
-				redrawHealthBarIf(attacked.equals(hero));
-				e = attacked;
-				someoneDied = true;
-			}
-			redrawHealthBarIf(attacked.equals(hero));
-		}
-		if (someoneDied && !(e instanceof Hero)) {
-			getLevel().getElementList().remove(e);
-		}	else if (someoneDied && e instanceof Hero) {
-			gui.dispose();
 		}
 	}
 	
