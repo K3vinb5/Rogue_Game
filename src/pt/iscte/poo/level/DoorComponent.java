@@ -1,4 +1,4 @@
-package pt.iscte.level;
+package pt.iscte.poo.level;
 
 import pt.iscte.poo.interfaces.Transposible;
 import pt.iscte.poo.main.GameElement;

@@ -1,4 +1,4 @@
-package pt.iscte.level;
+package pt.iscte.poo.level;
 
 import pt.iscte.poo.utils.Point2D;
 

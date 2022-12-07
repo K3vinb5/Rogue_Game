@@ -3,24 +3,13 @@ package pt.iscte.poo.main;
 import java.util.ArrayList;
 import java.util.List;
 
-import pt.iscte.level.DoorComponent;
-import pt.iscte.level.GoldenKey;
-import pt.iscte.level.Level;
-import pt.iscte.level.RedDoor;
-import pt.iscte.poo.entities.Entity;
-import pt.iscte.poo.entities.Hero;
+import pt.iscte.poo.entities.*;
 import pt.iscte.poo.gui.ImageMatrixGUI;
-import pt.iscte.poo.interfaces.Armament;
-import pt.iscte.poo.interfaces.Consumable;
-import pt.iscte.poo.interfaces.Enemy;
-import pt.iscte.poo.interfaces.Pickable;
-import pt.iscte.poo.items.KeyComponent;
-import pt.iscte.poo.items.Treasure;
-import pt.iscte.poo.observer.Observed;
-import pt.iscte.poo.observer.Observer;
-import pt.iscte.poo.utils.Direction;
-import pt.iscte.poo.utils.Point2D;
-import pt.iscte.poo.utils.Vector2D;
+import pt.iscte.poo.interfaces.*;
+import pt.iscte.poo.items.*;
+import pt.iscte.poo.level.*;
+import pt.iscte.poo.observer.*;
+import pt.iscte.poo.utils.*;
 import java.awt.event.KeyEvent;
 
 public class Engine implements Observer {
@@ -356,7 +345,6 @@ public class Engine implements Observer {
 	private void tryUnlocking(DoorComponent d) {
 		for (KeyComponent k : hero.getStats().getKeys()) {
 			if (d.getKeyID().equals(k.getKeyID())) {
-				System.out.println("Key Index is: " + hero.getStats().getIndex(k));
 				hero.getStats().removeItem(hero.getStats().getIndex(k) - hero.getStats().INVENTORY_STARTING_INDEX, k);
 				gui.removeImage(k);
 				d.setLocked(false);

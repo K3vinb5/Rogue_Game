@@ -1,4 +1,4 @@
-package pt.iscte.level;
+package pt.iscte.poo.level;
 
 import java.io.File;
 import java.io.FileNotFoundException;
