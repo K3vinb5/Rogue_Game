@@ -1,7 +1,9 @@
 package pt.iscte.poo.main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 import pt.iscte.poo.entities.*;
 import pt.iscte.poo.gui.ImageMatrixGUI;
@@ -11,6 +13,10 @@ import pt.iscte.poo.level.*;
 import pt.iscte.poo.observer.*;
 import pt.iscte.poo.utils.*;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 
 public class Engine implements Observer {
 
@@ -27,6 +33,7 @@ public class Engine implements Observer {
 	private List<Level> levelList = new ArrayList<>();
 	private int currentFloor;
 	private int turns;
+	private int enemiesKilled;
 
 	// - - Methods --
 
@@ -106,6 +113,9 @@ public class Engine implements Observer {
 		return currentFloor;
 	}
 	
+	public String getUserName() {
+		return userName;
+	}
 
 	public void setCurrentFloor(int currentFloor) {
 		this.currentFloor = currentFloor;
@@ -143,11 +153,16 @@ public class Engine implements Observer {
 		gui.dispose();
 	}
 	
+	public int getEnemiesKilled() {
+		return enemiesKilled;
+	}
+
+	public void setEnemiesKilled(int enemiesKilled) {
+		this.enemiesKilled = enemiesKilled;
+	}
+	
 	@Override
 	public void update(Observed source) {
-		if (hero.getHealth() <= 0) {
-			return;
-		}
 		// Hero Movement
 		int keyPressed = ((ImageMatrixGUI) source).keyPressed();
 		moveHero(keyPressed);
@@ -165,6 +180,12 @@ public class Engine implements Observer {
 
 		// Updates Graphical User Interface
 		gui.update();
+		
+		//Ending of the game
+		if (hero.getHealth() <= 0) {
+			gui.setMessage(Integer.toString(calculateScore(getTurns(), (int)Math.max(hero.getHealth(), 0), getEnemiesKilled(), getUserName())));
+			gui.dispose();
+		}
 	}
 
 	private void moveEnemy(Entity e) {
@@ -352,6 +373,47 @@ public class Engine implements Observer {
 			}
 		}
 	}
+	
+	private static int calculateScore(int turns, int heroHealth, int enemiesKilled, String userName) {
+		double output = (enemiesKilled + heroHealth)/ (turns*0.1) * 100;
+		int returnValue = (int)Math.round(output);
+		try {
+			
+			List<Integer> scores = new ArrayList<>();
+			HashMap<Integer, String> names = new HashMap<Integer, String>();
+			File file = new File("scores//scores.txt");
+			
+			Scanner scanner = new Scanner(file);
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				scores.add(Integer.parseInt(line.split(":")[0]));
+				names.put(scores.get(scores.size() - 1), line.split(":")[1]);
+			}
+			scanner.close();
+			PrintWriter p = new PrintWriter(new FileOutputStream(file, false));
+			if (scores.size() < 5) {
+				scores.add(returnValue);
+				names.put(returnValue, userName);
+				scores.sort((o1,o2) -> o1-o2); // Sort scores ascending order
+				for (int i = 0; i < scores.size(); i++)
+					p.println(scores.get(i) + ":" + names.get(scores.get(i)));
+			}else {
+				scores.sort((o1,o2) -> o1-o2); // Sort scores ascending order
+				if (scores.get(0) <= returnValue) {
+					scores.remove(0); //Removes the lowest Score
+					scores.add(returnValue);
+					names.put(returnValue, userName);
+					scores.sort((o1,o2) -> o1-o2); // Sort scores ascending order
+				}
+				for (int i = 0; i < scores.size(); i++)
+					p.println(scores.get(i) + ":" + names.get(scores.get(i)));
+			}
+			p.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return returnValue;
+	}
 
 
 	// Temporary
@@ -376,5 +438,6 @@ public class Engine implements Observer {
 			break;
 		}
 	}
+
 
 }

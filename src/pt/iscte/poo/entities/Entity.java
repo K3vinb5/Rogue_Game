@@ -78,6 +78,7 @@ public abstract class Entity extends GameElement implements Movable, Attackable{
 		}
 		if (someoneDied && !(e instanceof Hero)) {
 			getEngine().getLevel().getElementList().remove(e);
+			getEngine().setEnemiesKilled(getEngine().getEnemiesKilled() + 1);
 		}	else if (someoneDied && e instanceof Hero) {
 			//gui.dispose();
 		}

@@ -1,9 +1,8 @@
-package pt.iscte.poo.level;
+package pt.iscte.poo.items;
 
-import pt.iscte.poo.items.Key;
 import pt.iscte.poo.utils.Point2D;
 
-public class GoldenKey extends Key{
+public class GoldenKey extends KeyComponent{
 
 	public GoldenKey(Point2D position, String keyId) {
 		super(position, keyId);
