@@ -13,7 +13,7 @@ public class Hero extends Entity{
 	private boolean isPoisoned;
 	private Sword sword;
 	private Armor armor;
-	private Stats stats = new Stats(true); // has to always be true
+	private Stats stats = new Stats(true); // has to always be true for the hero
 	private static final double maxHealth = 50;
 
 	public Hero(Point2D position) {

@@ -1,8 +1,6 @@
 package pt.iscte.poo.main;
 
-import pt.iscte.poo.items.Key;
 import pt.iscte.poo.items.KeyComponent;
-//import pt.iscte.poo.gui.ImageTile;
 import pt.iscte.poo.utils.Point2D;
 
 import java.util.ArrayList;
@@ -115,7 +113,7 @@ public class Stats {
 	public List<KeyComponent> getKeys(){
 		List<KeyComponent> returnList = new ArrayList<>();
 		for (int i = INVENTORY_STARTING_INDEX; i < INVENTORY_STARTING_INDEX + occupiedSlots(); i++ ) {
-			if (itemsList.get(i) instanceof Key ) {
+			if (itemsList.get(i) instanceof KeyComponent ) {
 				returnList.add((KeyComponent)itemsList.get(i));
 			}
 		}

@@ -9,8 +9,8 @@ public abstract class KeyComponent extends GameElement implements Transposible, 
 
 	private String keyID;
 	
-	public KeyComponent( Point2D position, String keyId) {
-		super("Key", position, 1);
+	public KeyComponent( String name, Point2D position, String keyId) {
+		super(name, position, 1);
 		this.keyID = keyId;
 	}
 

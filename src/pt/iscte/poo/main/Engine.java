@@ -50,28 +50,16 @@ public class Engine implements Observer {
 	}
 
 	public void start() {
-		userName = gui.askUser("Please insert your name: ");
 		//gui.setMessage("Test");
 		currentFloor = 0;
 		for (int i = 0; i < 7; i++)
 			levelList.add(new Level("rooms//room" + (currentFloor + i) + ".txt"));
 		
-//		currentFloor = 0;
-//		for (int i = 0; i < 6; i++) {
-//			int populatedFloors = 0;
-//			while (populatedFloors<3) {				
-//				GameElement g = getLevel().getElement(new Point2D((int)Math.random()*GRID_WIDTH, (int)Math.random()*GRID_HEIGHT));
-//				if (g == null) {
-//					g.setName("Grass");
-//					populatedFloors++;
-//				}
-//			}
-//		}
-		
 		addObjects(new Hero(new Point2D(4, 4)));
 		addStatus();
 		gui.setStatusMessage("Turns:" + turns);
 		gui.update();
+		userName = gui.askUser("Please insert your name: ");
 	}
 
 
@@ -183,7 +171,7 @@ public class Engine implements Observer {
 		
 		//Ending of the game
 		if (hero.getHealth() <= 0) {
-			gui.setMessage(Integer.toString(calculateScore(getTurns(), (int)Math.max(hero.getHealth(), 0), getEnemiesKilled(), getUserName())));
+			gui.setMessage(calculateScore(getTurns(), (int)Math.max(hero.getHealth(), 0), getEnemiesKilled(), getUserName() ));
 			gui.dispose();
 		}
 	}
@@ -302,6 +290,7 @@ public class Engine implements Observer {
 					getLevel().loadLevel(doorOpen.getRoom(), doorOpen.getNewPostion());
 				}
 			}else if (item instanceof Treasure && !((Treasure) item).isOpened()){
+				gui.setMessage(calculateScore(getTurns(), (int)Math.max(hero.getHealth(), 0), getEnemiesKilled(), getUserName()));
 				extraContent(item);
 			}
 		}
@@ -374,7 +363,7 @@ public class Engine implements Observer {
 		}
 	}
 	
-	private static int calculateScore(int turns, int heroHealth, int enemiesKilled, String userName) {
+	private String calculateScore(int turns, int heroHealth, int enemiesKilled, String userName) {
 		double output = (enemiesKilled + heroHealth)/ (turns*0.1) * 100;
 		int returnValue = (int)Math.round(output);
 		try {
@@ -409,6 +398,31 @@ public class Engine implements Observer {
 					p.println(scores.get(i) + ":" + names.get(scores.get(i)));
 			}
 			p.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return getScores() + userName + ", your score is: " + returnValue;
+	}
+	
+	private static String getScores() {
+		String returnValue ="Top Scores: \n";
+		try {
+			List<Integer> scores = new ArrayList<>();
+			HashMap<Integer, String> names = new HashMap<Integer, String>();
+			File file = new File("scores//scores.txt");
+			
+			Scanner scanner = new Scanner(file);
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				scores.add(Integer.parseInt(line.split(":")[0]));
+				names.put(scores.get(scores.size() - 1), line.split(":")[1]);
+			}
+			scanner.close();
+			
+			for (int score : scores) {
+				returnValue+= score + " : " + names.get(score) + "\n";
+			}
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
