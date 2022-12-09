@@ -9,5 +9,14 @@
 #        #
 ##########
 
-RedDoor,0,1,room5,9,1
-BigCrab,2,2
+RedDoor,0,1,room5,9,1,KEY12
+DiamondTreasure,4,8
+SuperHealingPotion,5,1
+Bat,2,3
+Bat,5,3
+Bat,8,3
+Skeleton,4,4
+Thug,2,7
+Thug,5,7
+Thug,8,7
+

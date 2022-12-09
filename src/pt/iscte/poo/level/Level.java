@@ -330,7 +330,7 @@ public class Level {
 					}
 				break;
 				case "DiamondTreasure":
-					returnEntityList.add(new Treasure(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2]))));
+					returnEntityList.add(new DiamondTreasure(new Point2D(Integer.parseInt(attributes[1]), Integer.parseInt(attributes[2]))));
 				break;
 				default:
 					break;

@@ -289,6 +289,9 @@ public class Engine implements Observer {
 					DoorComponent doorOpen = (DoorComponent) item;
 					getLevel().loadLevel(doorOpen.getRoom(), doorOpen.getNewPostion());
 				}
+			}else if (item instanceof DiamondTreasure && !((DiamondTreasure) item).isOpened()){
+				gui.setMessage("You have finished the extra content, the game will now be closed. Thanks for playing");
+				gui.dispose();
 			}else if (item instanceof Treasure && !((Treasure) item).isOpened()){
 				gui.setMessage(calculateScore(getTurns(), (int)Math.max(hero.getHealth(), 0), getEnemiesKilled(), getUserName()));
 				extraContent(item);
