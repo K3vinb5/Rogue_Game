@@ -14,10 +14,11 @@ public class Hero extends Entity{
 	private Sword sword;
 	private Armor armor;
 	private Stats stats = new Stats(true); // has to always be true for the hero
-	private static final double maxHealth = 50;
+	private double maxHealth;
 
 	public Hero(Point2D position) {
-		super("Hero", position, maxHealth, 1);
+		super("Hero", position, 10, 1);
+		maxHealth = this.getHealth();
 		sword = null;
 		armor = null;
 	}
@@ -76,6 +77,11 @@ public class Hero extends Entity{
 	
 	public double getMaxHealth() {
 		return maxHealth;
+	}
+	
+	public void setMaxHealth(double maxHealth) {
+		this.maxHealth = maxHealth;
+		this.setHealth(maxHealth);
 	}
 	
 	public void giveHealth(double health) {

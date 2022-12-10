@@ -6,6 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/GraphPack_2022_2023_V1_1"/>
+	<classpathentry kind="lib" path="/home/kevin/workspace-projeto/Rogue_TeresaFernandes_92866_KevinBorges_98763/Jars/GraphPack.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

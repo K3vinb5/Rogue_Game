@@ -59,6 +59,7 @@ public class Engine implements Observer {
 		addStatus();
 		gui.setStatusMessage("Turns:" + turns);
 		gui.update();
+		startMenu();
 		userName = gui.askUser("Please insert your name: ");
 	}
 
@@ -172,7 +173,7 @@ public class Engine implements Observer {
 		//Ending of the game
 		if (hero.getHealth() <= 0) {
 			gui.setMessage(calculateScore(getTurns(), (int)Math.max(hero.getHealth(), 0), getEnemiesKilled(), getUserName() ));
-			gui.dispose();
+			restart();
 		}
 	}
 
@@ -436,25 +437,79 @@ public class Engine implements Observer {
 	// Temporary
 	private void test(int keyPressed) {
 		switch (keyPressed) {
-		case KeyEvent.VK_NUMPAD7:
+		case KeyEvent.VK_NUMPAD0:
 			getLevel().loadLevel(0, hero.getPosition());
 			break;
-		case KeyEvent.VK_NUMPAD8:
+		case KeyEvent.VK_NUMPAD1:
 			getLevel().loadLevel(1, hero.getPosition());
 			break;
-		case KeyEvent.VK_NUMPAD9:
+		case KeyEvent.VK_NUMPAD2:
 			getLevel().loadLevel(2, hero.getPosition());
 			break;
-		case KeyEvent.VK_NUMPAD4:
+		case KeyEvent.VK_NUMPAD3:
 			getLevel().loadLevel(3, hero.getPosition());
 			break;
-		case KeyEvent.VK_NUMPAD5:
+		case KeyEvent.VK_NUMPAD4:
 			getLevel().loadLevel(4, hero.getPosition());
+			break;
+		case KeyEvent.VK_NUMPAD5:
+			getLevel().loadLevel(5, hero.getPosition());
+			break;
+		case KeyEvent.VK_NUMPAD6:
+			getLevel().loadLevel(6, hero.getPosition());
+			break;
+		case KeyEvent.VK_M:
+			menu();
 			break;
 		default:
 			break;
 		}
 	}
-
+	
+	private void restart() {
+		levelList.clear();
+		hero = null;
+		gui.clearImages();
+		start();
+	}
+	
+	private void menu() {
+		String input = gui.askUser("Menu\n\n0. - Easy (50 hp)\n1. - Hard (10 hp)\n2. - Resume\n3. - Restart Game\n4. - Quit Game\n\nClick M while playing to access the menu");
+		switch (input) {
+		case "0":
+				hero.setMaxHealth(50);
+			break;
+		case "1":
+				hero.setMaxHealth(10);
+			break;
+		case "2":
+				//do nothing
+			break;
+		case "3":
+				restart();
+			break;
+		case "4":
+				gui.dispose();
+			break;
+		default:
+				menu();
+			break;
+		}
+	}
+	
+	private void startMenu() {
+		String input = gui.askUser("Start Menu\n\n0. - Easy (50 hp)\n1. - Hard (10 hp)\n\nClick M while playing to access the menu");
+		switch (input) {
+		case "0":
+				hero.setMaxHealth(50);
+			break;
+		case "1":
+				hero.setMaxHealth(10);
+			break;
+		default:
+			startMenu();
+			break;
+		}
+	}
 
 }
