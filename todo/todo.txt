@@ -1,3 +1,0 @@
-bug poder mover pra dentro de enemy se o mesmo tiver decima de uma chave
-nao poder apanhar items quando os mesmos estao numa dorway
-Usar a materia que demos, expressoes lambda por exemplo (Implementar mais tarde isto)
